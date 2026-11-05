@@ -3,17 +3,19 @@
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, FilePenLine, Home, Image, LogOut, Menu, MoreVertical, Pencil, Plus, Search, Settings, Trash2, Trees, Upload, Users, X } from "lucide-react";
-import { deleteEntry, saveEntry } from "./actions";
+import { deleteEntry, saveEntry, saveSettings } from "./actions";
 import type { entries } from "@/db/schema";
 
 type Item = typeof entries.$inferSelect;
 type Notice = { text: string; error: boolean } | null;
-type Modal = "create" | "edit" | "detail" | "delete" | null;
+type Modal = "create" | "edit" | "detail" | "delete" | "contact" | "help" | null;
+type Contact = { phone: string; phone2: string; zalo: string; map: string };
 const pageSize = 10;
 const statusLabel = { available: "Còn tại vườn", sold: "Đã bán", contact: "Liên hệ" } as const;
 const typeLabel = { plant: "Cây quất", article: "Bài viết" } as const;
+const dashboardStyles = `.admin-nav button{display:flex;align-items:center;gap:13px;width:100%;padding:12px;border:0;border-radius:8px;background:transparent;color:#eaf5ff;text-align:left;font:600 14px DM Sans,sans-serif;cursor:pointer}.admin-nav button:hover,.admin-nav button.active{background:#087dc3}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px}.overview-grid>div{padding:24px;background:#fff;border-radius:14px;box-shadow:0 5px 24px #174a6810}.overview-grid span,.overview-grid small{display:block;color:#708798;font-size:13px}.overview-grid b{display:block;margin:12px 0 8px;font-size:38px;color:#086aa9}.overview-card{background:linear-gradient(115deg,#07558e,#0d79b5);border-radius:14px;padding:30px;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:24px}.overview-card h2{font-family:DM Sans,sans-serif;font-size:22px;font-weight:700}.overview-card p{max-width:520px;color:#e2f3ff;line-height:1.7}.overview-card>div:last-child{display:flex;gap:10px;flex-wrap:wrap}.overview-card .secondary-button{background:#fff;color:#086aa9}.overview-card .plain-button{background:#ffffff18;border-color:#ffffff55;color:#fff}.help-panel{padding:24px;line-height:1.8;color:#526e80}.help-panel h3{font-family:DM Sans,sans-serif;font-size:20px;color:#23445b}.help-panel a{display:inline-block;color:#0870b2;font-weight:700;margin-top:10px}@media(max-width:700px){.overview-grid{grid-template-columns:1fr}.overview-card{align-items:flex-start;flex-direction:column}}`;
 
-export function EntryManager({ items, logoutPath }: { items: Item[]; logoutPath: string }) {
+export function EntryManager({ items, logoutPath, contact }: { items: Item[]; logoutPath: string; contact: Contact }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState("all");
@@ -23,6 +25,7 @@ export function EntryManager({ items, logoutPath }: { items: Item[]; logoutPath:
   const [selected, setSelected] = useState<Item | null>(null);
   const [notice, setNotice] = useState<Notice>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [screen, setScreen] = useState<"overview" | "content">("content");
   const filtered = useMemo(() => items.filter((item) => {
     const text = `${item.title} ${item.code} ${item.description}`.toLowerCase();
     return text.includes(query.toLowerCase()) && (kind === "all" || item.kind === kind) && (status === "all" || item.status === status);
@@ -35,29 +38,36 @@ export function EntryManager({ items, logoutPath }: { items: Item[]; logoutPath:
   function open(mode: Modal, item: Item | null = null) { setSelected(item); setModal(mode); }
   function close() { setModal(null); setSelected(null); }
   function filter(update: () => void) { update(); setPage(1); }
+  function navigate(next: "overview" | "content", nextKind?: string) {
+    setScreen(next);
+    if (nextKind !== undefined) setKind(nextKind);
+    setPage(1);
+    setSidebarOpen(false);
+  }
 
-  return <div className="admin-shell">
+  return <><style>{dashboardStyles}</style><div className="admin-shell">
     <aside className={sidebarOpen ? "admin-sidebar open" : "admin-sidebar"}>
       <div className="admin-brand"><span className="admin-brand-mark">✳</span><span>NHÀ VƯỜN<br/><b>NHO VĂN</b></span><button className="sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Đóng menu"><X size={20}/></button></div>
       <p className="sidebar-caption">HỆ THỐNG QUẢN TRỊ</p>
       <nav className="admin-nav">
-        <a href="/admin"><Home size={18}/>Tổng quan</a>
-        <a className="active" href="#quan-ly-noi-dung"><FilePenLine size={18}/>Quản lý nội dung</a>
-        <a href="/#cay"><Trees size={18}/>Cây quất</a>
-        <a href="/#baiviet"><BookOpen size={18}/>Bài viết</a>
-        <a href="#lien-he"><Users size={18}/>Thông tin liên hệ</a>
+        <button className={screen === "overview" ? "active" : ""} onClick={() => navigate("overview")}><Home size={18}/>Tổng quan</button>
+        <button className={screen === "content" && kind === "all" ? "active" : ""} onClick={() => navigate("content", "all")}><FilePenLine size={18}/>Quản lý nội dung</button>
+        <button className={screen === "content" && kind === "plant" ? "active" : ""} onClick={() => navigate("content", "plant")}><Trees size={18}/>Cây quất</button>
+        <button className={screen === "content" && kind === "article" ? "active" : ""} onClick={() => navigate("content", "article")}><BookOpen size={18}/>Bài viết</button>
+        <button onClick={() => {setModal("contact");setSidebarOpen(false)}}><Users size={18}/>Thông tin liên hệ</button>
         <a href="/"><Image size={18}/>Xem website</a>
-        <a href="#ho-tro"><CircleHelp size={18}/>Hỗ trợ</a>
+        <button onClick={() => {setModal("help");setSidebarOpen(false)}}><CircleHelp size={18}/>Hỗ trợ</button>
       </nav>
       <div className="sidebar-bottom"><a href={logoutPath}><LogOut size={18}/>Đăng xuất</a></div>
     </aside>
     <div className="admin-main">
       <header className="admin-topbar">
         <button className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Mở menu"><Menu size={21}/></button>
-        <p>Trang chủ <span>›</span> <b>Quản lý nội dung</b></p>
+        <p>Trang chủ <span>›</span> <b>{screen === "overview" ? "Tổng quan" : "Quản lý nội dung"}</b></p>
         <div className="topbar-actions"><a href="/"><Home size={18}/><span>Website</span></a><a href={logoutPath} className="logout-link"><LogOut size={18}/><span>Đăng xuất</span></a></div>
       </header>
       <main className="admin-content" id="quan-ly-noi-dung">
+        {screen === "overview" ? <Overview items={items} onOpenContent={() => navigate("content", "all")} onCreate={() => open("create")} onContact={() => setModal("contact")}/> : <>
         <div className="content-heading"><div><p>QUẢN LÝ NHÀ VƯỜN</p><h1>Cây quất & bài viết</h1></div><button className="primary-button" onClick={() => open("create")}><Plus size={18}/>Thêm nội dung</button></div>
         {notice && <p className={notice.error ? "toast error" : "toast success"} role={notice.error ? "alert" : "status"}>{notice.text}<button onClick={() => setNotice(null)} aria-label="Đóng thông báo"><X size={16}/></button></p>}
         <section className="manager-card">
@@ -80,13 +90,21 @@ export function EntryManager({ items, logoutPath }: { items: Item[]; logoutPath:
           </table></div>
           <div className="pagination"><span>{rangeStart} - {rangeEnd} của {filtered.length} nội dung</span><div><button onClick={() => setPage(Math.max(1, safePage - 1))} disabled={safePage === 1} aria-label="Trang trước"><ChevronLeft size={18}/></button><span className="page-current">{safePage}</span><span className="page-total">/ {pages}</span><button onClick={() => setPage(Math.min(pages, safePage + 1))} disabled={safePage === pages} aria-label="Trang sau"><ChevronRight size={18}/></button></div></div>
         </section>
+        </>}
       </main>
     </div>
     {modal === "create" && <ContentModal title="Thêm nội dung mới" onClose={close}><EntryForm onComplete={(n) => { setNotice(n); close(); router.refresh(); }}/></ContentModal>}
     {modal === "edit" && selected && <ContentModal title={`Chỉnh sửa: ${selected.title}`} onClose={close}><EntryForm item={selected} onComplete={(n) => { setNotice(n); close(); router.refresh(); }}/></ContentModal>}
     {modal === "detail" && selected && <ContentModal title="Chi tiết nội dung" onClose={close}><Detail item={selected} onEdit={() => setModal("edit")}/></ContentModal>}
     {modal === "delete" && selected && <DeleteModal item={selected} onClose={close} onComplete={(n) => {setNotice(n);close();router.refresh();}}/>}
-  </div>;
+    {modal === "contact" && <ContentModal title="Thông tin liên hệ" onClose={close}><ContactForm contact={contact} onComplete={(n) => {setNotice(n);close();router.refresh();}}/></ContentModal>}
+    {modal === "help" && <ContentModal title="Hỗ trợ quản trị" onClose={close}><div className="help-panel"><h3>Hướng dẫn nhanh</h3><ol><li>Chọn <b>Thêm nội dung</b> để đăng cây quất hoặc bài viết.</li><li>Nhấn biểu tượng bút để sửa, ba chấm để xem chi tiết.</li><li>Ảnh hỗ trợ JPEG, PNG và WebP, tối đa 5 MB.</li><li>Chọn <b>Xuất bản công khai</b> để nội dung xuất hiện trên website.</li></ol><a href="tel:0389982886">Gọi nhà vườn: 0389982886</a></div></ContentModal>}
+  </div></>;
+}
+
+function Overview({items,onOpenContent,onCreate,onContact}:{items:Item[];onOpenContent:()=>void;onCreate:()=>void;onContact:()=>void}) {
+  const live=items.filter((item)=>item.published).length; const plants=items.filter((item)=>item.kind==="plant").length; const articles=items.filter((item)=>item.kind==="article").length;
+  return <><div className="content-heading"><div><p>TỔNG QUAN NHÀ VƯỜN</p><h1>Xin chào, chúc bạn một ngày tốt lành</h1></div><button className="primary-button" onClick={onCreate}><Plus size={18}/>Thêm nội dung</button></div><section className="overview-grid"><div><span>Nội dung đã xuất bản</span><b>{live}</b><small>Đang hiển thị trên website</small></div><div><span>Cây quất</span><b>{plants}</b><small>Được quản lý trong hệ thống</small></div><div><span>Bài viết</span><b>{articles}</b><small>Thông tin và chia sẻ từ vườn</small></div></section><section className="overview-card"><div><h2>Quản lý nhà vườn</h2><p>Thêm cây mới, cập nhật bài viết và giữ thông tin liên hệ luôn chính xác.</p></div><div><button className="secondary-button" onClick={onOpenContent}>Quản lý nội dung</button><button className="plain-button" onClick={onContact}>Thông tin liên hệ</button></div></section></>;
 }
 
 function ContentModal({ title, children, onClose }: { title:string; children:React.ReactNode; onClose:()=>void }) {
@@ -107,5 +125,10 @@ function EntryForm({item,onComplete}:{item?:Item;onComplete:(notice:NonNullable<
   const [pending,startTransition]=useTransition(); const [error,setError]=useState("");
   function submit(event:FormEvent<HTMLFormElement>) {event.preventDefault();const form=event.currentTarget;const data=new FormData(form);if(item)data.set("id",String(item.id));const file=data.get("photo");setError("");startTransition(async()=>{try{if(file instanceof File&&file.size){if(file.size>5*1024*1024)throw new Error("Ảnh phải nhỏ hơn hoặc bằng 5 MB.");const upload=new FormData();upload.set("file",file);const response=await fetch("/api/upload",{method:"POST",body:upload});const result=await response.json() as {url?:string;error?:string};if(!response.ok||!result.url)throw new Error(result.error||"Không thể tải ảnh lên.");data.set("image",result.url)}data.delete("photo");await saveEntry(data);onComplete({text:item?"Đã lưu thay đổi thành công.":"Đã tạo nội dung thành công.",error:false})}catch(cause){setError(cause instanceof Error?cause.message:"Không thể lưu nội dung. Vui lòng thử lại.")}})}
   return <form onSubmit={submit} className="content-form"><input type="hidden" name="operation" value={item?"update":"create"}/><input type="hidden" name="id" value={item?.id ?? ""}/><div className="form-grid"><label>Loại nội dung<select name="kind" defaultValue={item?.kind||"plant"}><option value="plant">Cây quất</option><option value="article">Bài viết</option></select></label><label>Trạng thái<select name="status" defaultValue={item?.status||"contact"}><option value="contact">Liên hệ</option><option value="available">Còn tại vườn</option><option value="sold">Đã bán</option></select></label><label className="wide">Tiêu đề<input name="title" required maxLength={150} defaultValue={item?.title} placeholder="Nhập tên cây hoặc tiêu đề bài viết"/></label><label>Mã cây<input name="code" defaultValue={item?.code} placeholder="Ví dụ: Q-2026-01"/></label><label>Giá hoặc thông tin giá<input name="price" defaultValue={item?.price} placeholder="Ví dụ: Liên hệ để biết giá"/></label><label className="wide upload-field">Tải ảnh lên<input type="file" name="photo" accept="image/jpeg,image/png,image/webp"/><span><Upload size={16}/> JPEG, PNG hoặc WebP, tối đa 5 MB</span></label><label className="wide">Hoặc dùng liên kết ảnh HTTPS<input type="text" name="image" defaultValue={item?.image} placeholder="https://..."/></label><label className="wide">Nội dung<textarea name="description" rows={6} defaultValue={item?.description} placeholder="Viết mô tả, đặc điểm hoặc câu chuyện về cây..."/></label><label className="toggle-field wide"><input type="checkbox" name="published" defaultChecked={item?.published===1}/><span>Xuất bản công khai</span></label></div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":"Lưu nội dung"}</button></div></form>;
+}
+function ContactForm({contact,onComplete}:{contact:Contact;onComplete:(notice:NonNullable<Notice>)=>void}) {
+  const [pending,startTransition]=useTransition(); const [error,setError]=useState("");
+  function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();const data=new FormData(event.currentTarget);setError("");startTransition(async()=>{try{await saveSettings(data);onComplete({text:"Đã lưu thông tin liên hệ thành công.",error:false})}catch{setError("Không thể lưu thông tin liên hệ. Vui lòng thử lại.")}})}
+  return <form className="content-form" onSubmit={submit}><div className="form-grid"><label>Điện thoại<input name="phone" defaultValue={contact.phone}/></label><label>Điện thoại thứ hai<input name="phone2" defaultValue={contact.phone2}/></label><label className="wide">Liên kết Zalo<input name="zalo" type="url" defaultValue={contact.zalo} placeholder="https://zalo.me/..."/></label><label className="wide">Liên kết Google Maps<input name="map" type="url" defaultValue={contact.map} placeholder="https://maps.app.goo.gl/..."/></label></div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":"Lưu thông tin"}</button></div></form>
 }
 function formatDate(value:string){const date=new Date(value);return Number.isNaN(date.valueOf())?"—":date.toLocaleDateString("vi-VN",{day:"2-digit",month:"2-digit",year:"numeric"})}
