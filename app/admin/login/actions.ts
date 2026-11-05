@@ -12,11 +12,13 @@ export async function loginAction(formData: FormData) {
   const username = String(formData.get("username") || "");
   const password = String(formData.get("password") || "");
   const destination = returnPath(formData.get("return_to"));
+  let user = null;
   try {
-    const user = await attemptLogin(username, password);
-    if (user) redirect(destination);
-  } catch {
+    user = await attemptLogin(username, password);
+  } catch (error) {
     // Keep all authentication failures indistinguishable to visitors.
+    console.error("Admin login failed", error);
   }
+  if (user) redirect(destination);
   redirect(`/admin/login?error=invalid&return_to=${encodeURIComponent(destination)}`);
 }
