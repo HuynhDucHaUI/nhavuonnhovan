@@ -11,7 +11,18 @@ export async function saveEntry(f:FormData){
  await authorize(); const title=val(f,"title",150);if(!title)throw new Error("Cần nhập tiêu đề.");
  const kind=val(f,"kind")==="article"?"article":"plant";const status=val(f,"status");
  const item={title,kind,code:val(f,"code",80),description:val(f,"description",12000),image:imageUrl(val(f,"image",2048)),price:val(f,"price",100),status:["available","sold","contact"].includes(status)?status:"contact",published:f.get("published")?1:0};
- const id=Number(f.get("id"));const db=getDb();if(Number.isSafeInteger(id)&&id>0) {const updated=await db.update(entries).set(item).where(eq(entries.id,id)).returning({id:entries.id});if(!updated.length)throw new Error("Bài viết không còn tồn tại.");}else await db.insert(entries).values({...item,createdAt:new Date().toISOString()});
+ const operation = val(f,"operation",20);
+ const id=Number(f.get("id"));
+ const db=getDb();
+ if (operation === "update") {
+   if (!Number.isSafeInteger(id) || id <= 0) throw new Error("Không xác định được nội dung cần cập nhật. Hãy đóng cửa sổ và chọn Chỉnh sửa lại.");
+   const updated=await db.update(entries).set(item).where(eq(entries.id,id)).returning({id:entries.id});
+   if(!updated.length)throw new Error("Bài viết không còn tồn tại.");
+ } else if (operation === "create") {
+   await db.insert(entries).values({...item,createdAt:new Date().toISOString()});
+ } else {
+   throw new Error("Yêu cầu lưu nội dung không hợp lệ.");
+ }
  revalidatePath("/");revalidatePath("/admin");
 }
 export async function deleteEntry(id:number){
