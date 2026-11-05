@@ -3,8 +3,11 @@ import { getChatGPTUser } from "@/app/chatgpt-auth";
 
 export async function isAdmin() {
   const user = await getChatGPTUser();
-  const admin = (env as unknown as { ADMIN_EMAIL?: string }).ADMIN_EMAIL;
-  return Boolean(user && admin && user.email.toLowerCase() === admin.toLowerCase());
+  const configuredEmails = (env as unknown as { ADMIN_EMAIL?: string }).ADMIN_EMAIL
+    ?.split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean) ?? [];
+  return Boolean(user && configuredEmails.includes(user.email.toLowerCase()));
 }
 
 export async function authorize() {
