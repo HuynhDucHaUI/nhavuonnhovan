@@ -78,11 +78,11 @@ export async function createLotAction(formData: FormData) {
       env.DB.prepare(`INSERT INTO inventory_movements (lot_id,type,quantity,note,actor_user_id,created_at) SELECT id,'in',?,?,?,? FROM inventory_lots WHERE code=? AND created_at=?`).bind(quantity, "Tạo lô mới", actor.id, now, values.code, now),
     ]);
     if (result[0].meta.changes !== 1 || result[1].meta.changes !== 1) throw new Error("Không thể tạo lô.");
-    revalidateLot();
-    go(lotPath, "notice", "Đã tạo lô và ghi nhận tồn kho ban đầu.");
   } catch (cause) {
     go(`${lotPath}/new`, "error", cause instanceof Error ? cause.message : "Không thể tạo lô cây.");
   }
+  revalidateLot();
+  go(lotPath, "notice", "Đã tạo lô và ghi nhận tồn kho ban đầu.");
 }
 
 export async function updateLotAction(formData: FormData) {
@@ -93,11 +93,11 @@ export async function updateLotAction(formData: FormData) {
     const updated = await getDb().update(inventoryLots).set({ ...values, updatedAt: new Date().toISOString() })
       .where(eq(inventoryLots.id, lotId)).returning({ id: inventoryLots.id });
     if (!updated.length) throw new Error("Lô cây không còn tồn tại.");
-    revalidateLot(lotId);
-    go(`${lotPath}/${lotId}`, "notice", "Đã cập nhật thông tin lô. Số tồn chỉ thay đổi bằng giao dịch kho.");
   } catch (cause) {
     go(`${lotPath}/${lotId}/edit`, "error", cause instanceof Error ? cause.message : "Không thể cập nhật lô cây.");
   }
+  revalidateLot(lotId);
+  go(`${lotPath}/${lotId}`, "notice", "Đã cập nhật thông tin lô. Số tồn chỉ thay đổi bằng giao dịch kho.");
 }
 
 export async function recordMovementAction(formData: FormData) {
@@ -114,11 +114,11 @@ export async function recordMovementAction(formData: FormData) {
     const movement = env.DB.prepare(`INSERT INTO inventory_movements (lot_id,type,quantity,note,actor_user_id,created_at) SELECT id,?,?,?,?,? FROM inventory_lots WHERE id=? AND updated_at=?`).bind(type, delta, note, actor.id, now, lotId, now);
     const result = await env.DB.batch([statement, movement]);
     if (result[0].meta.changes !== 1 || result[1].meta.changes !== 1) throw new Error(type === "sale" ? "Không thể bán vượt số lượng tồn." : "Không thể ghi nhận giao dịch kho.");
-    revalidateLot(lotId);
-    go(`${lotPath}/${lotId}`, "notice", "Đã ghi nhận giao dịch tồn kho.");
   } catch (cause) {
     go(`${lotPath}/${lotId}`, "error", cause instanceof Error ? cause.message : "Không thể ghi nhận giao dịch.");
   }
+  revalidateLot(lotId);
+  go(`${lotPath}/${lotId}`, "notice", "Đã ghi nhận giao dịch tồn kho.");
 }
 
 export async function deleteLotAction(formData: FormData) {
@@ -129,9 +129,9 @@ export async function deleteLotAction(formData: FormData) {
     if (movement.some((item) => item.note !== "Tạo lô mới")) throw new Error("Không thể xóa lô đã có lịch sử giao dịch kho.");
     const deleted = await getDb().delete(inventoryLots).where(and(eq(inventoryLots.id, lotId))).returning({ id: inventoryLots.id });
     if (!deleted.length) throw new Error("Lô cây không còn tồn tại.");
-    revalidateLot(lotId);
-    go(lotPath, "notice", "Đã xóa lô chưa phát sinh giao dịch.");
   } catch (cause) {
     go(`${lotPath}/${lotId}`, "error", cause instanceof Error ? cause.message : "Không thể xóa lô cây.");
   }
+  revalidateLot(lotId);
+  go(lotPath, "notice", "Đã xóa lô chưa phát sinh giao dịch.");
 }
