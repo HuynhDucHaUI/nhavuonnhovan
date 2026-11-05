@@ -55,6 +55,7 @@ export function EntryManager({ items, contact, user }: { items: Item[]; contact:
         <button className={screen === "content" && kind === "all" ? "active" : ""} onClick={() => navigate("content", "all")}><FilePenLine size={18}/>Quản lý nội dung</button>
         <button className={screen === "content" && kind === "plant" ? "active" : ""} onClick={() => navigate("content", "plant")}><Trees size={18}/>Cây quất</button>
         <button className={screen === "content" && kind === "article" ? "active" : ""} onClick={() => navigate("content", "article")}><BookOpen size={18}/>Bài viết</button>
+        <a href="/admin/lots"><Trees size={18}/>Lô/luống & tồn kho</a>
         {user.role === "owner" && <a href="/admin/users"><Users size={18}/>Quản lý tài khoản</a>}
         <button onClick={() => {setModal("contact");setSidebarOpen(false)}}><Users size={18}/>Thông tin liên hệ</button>
         <a href="/"><Image size={18}/>Xem website</a>

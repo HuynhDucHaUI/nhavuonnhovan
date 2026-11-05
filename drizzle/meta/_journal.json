@@ -15,6 +15,20 @@
       "when": 1793853313765,
       "tag": "0001_furry_molecule_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793863661126,
+      "tag": "0002_mighty_ego",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1793863688515,
+      "tag": "0003_supreme_nuke",
+      "breakpoints": true
     }
   ]
 }

@@ -1,11 +1,11 @@
 import { SiteFooter, SiteHeader } from "./components/site-chrome";
-import { publicData } from "./data";
+import { publicData, publicLots } from "./data";
 
 export const dynamic = "force-dynamic";
 const homeLimit = 3;
 
 export default async function Home() {
-  const { items, config } = await publicData();
+  const [{ items, config }, lots] = await Promise.all([publicData(), publicLots()]);
   const plants = items
     .filter((item) => item.kind === "plant")
     .slice(0, homeLimit);
@@ -91,6 +91,31 @@ export default async function Home() {
               </div>
             ) : (
               <Empty text="Nhà vườn đang cập nhật hình ảnh cây quất." />
+            )}
+          </div>
+        </section>
+        <section className="catalog wholesale-home" id="lo-si">
+          <div className="wrap">
+            <div className="section-head">
+              <div>
+                <p className="eyebrow green">BÁN SỈ THEO LÔ / LUỐNG</p>
+                <h2>
+                  Chọn lô <em>phù hợp.</em>
+                </h2>
+              </div>
+              <div className="section-copy">
+                <p>
+                  Nhà vườn bán sỉ theo lô để khách dễ chọn số lượng và dáng cây phù hợp.
+                </p>
+                <a href="/lo-si">Xem tất cả lô đang chào bán →</a>
+              </div>
+            </div>
+            {lots.length ? (
+              <div className="grid">
+                {lots.slice(0, homeLimit).map((lot) => <LotCard lot={lot} key={lot.id} />)}
+              </div>
+            ) : (
+              <Empty text="Nhà vườn đang cập nhật các lô cây bán sỉ." />
             )}
           </div>
         </section>
@@ -185,6 +210,7 @@ export default async function Home() {
 }
 
 type PublicItem = Awaited<ReturnType<typeof publicData>>["items"][number];
+export type PublicLot = Awaited<ReturnType<typeof publicLots>>[number];
 export function PlantCard({ item }: { item: PublicItem }) {
   return (
     <a href={"/bai/" + item.id} className="card">
@@ -221,6 +247,21 @@ export function ArticleCard({ item }: { item: PublicItem }) {
         <h3>{item.title}</h3>
         <p>{item.description.slice(0, 140)}</p>
         <span>Đọc bài viết ↗</span>
+      </div>
+    </a>
+  );
+}
+export function LotCard({ lot }: { lot: PublicLot }) {
+  return (
+    <a href={`/lo/${lot.id}`} className="lot-card">
+      {lot.image ? <img src={lot.image} alt={lot.title} /> : <div className="lot-image">✳</div>}
+      <div className="lot-card-body">
+        <p className="eyebrow green">LÔ {lot.code} · CÒN HÀNG</p>
+        <h3>{lot.title}</h3>
+        <div className="lot-meta"><span>{lot.plantType}</span>{lot.sizeOrAge && <span>· {lot.sizeOrAge}</span>}</div>
+        <p>{lot.wholesalePrice || "Liên hệ báo giá"}</p>
+        <p className="lot-order">Mua tối thiểu: {lot.minimumOrderQuantity} {lot.unit}</p>
+        <span className="lot-cta">Xem lô & liên hệ →</span>
       </div>
     </a>
   );
