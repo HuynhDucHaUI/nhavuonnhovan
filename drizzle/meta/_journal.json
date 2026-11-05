@@ -29,6 +29,13 @@
       "when": 1793863688515,
       "tag": "0003_supreme_nuke",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793868374446,
+      "tag": "0004_bent_spectrum",
+      "breakpoints": true
     }
   ]
 }

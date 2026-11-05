@@ -1,19 +1,23 @@
 import { SiteFooter, SiteHeader } from "./components/site-chrome";
-import { publicData, publicLots } from "./data";
+import { latestPublicEntries, latestPublicLots, publicContact } from "./data";
+import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 const homeLimit = 3;
 
 export default async function Home() {
-  const [{ items, config }, lots] = await Promise.all([publicData(), publicLots()]);
-  const plants = items
-    .filter((item) => item.kind === "plant")
-    .slice(0, homeLimit);
-  const articles = items
-    .filter((item) => item.kind === "article")
-    .slice(0, homeLimit);
+  const [config, plants, articles, lots] = await Promise.all([
+    publicContact(), latestPublicEntries("plant", homeLimit),
+    latestPublicEntries("article", homeLimit), latestPublicLots(homeLimit),
+  ]);
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "LocalBusiness", name: SITE_NAME,
+        url: SITE_URL, description: "Nhà vườn quất cảnh Nho Văn, nhận bán sỉ quất cảnh trên toàn quốc.",
+        telephone: config.phone, address: { "@type": "PostalAddress", streetAddress: "Thôn CD Quán Trạch, Xã Văn Giang", addressRegion: "Hưng Yên", addressCountry: "VN" },
+        areaServed: { "@type": "Country", name: "Việt Nam" }, sameAs: config.zalo ? [config.zalo] : [],
+      }) }} />
       <SiteHeader />
       <main>
         <section className="hero">
@@ -209,14 +213,14 @@ export default async function Home() {
   );
 }
 
-type PublicItem = Awaited<ReturnType<typeof publicData>>["items"][number];
-export type PublicLot = Awaited<ReturnType<typeof publicLots>>[number];
+type PublicItem = Awaited<ReturnType<typeof latestPublicEntries>>[number];
+export type PublicLot = Awaited<ReturnType<typeof latestPublicLots>>[number];
 export function PlantCard({ item }: { item: PublicItem }) {
   return (
     <a href={"/bai/" + item.id} className="card">
       <div className="card-image">
         {item.image ? (
-          <img src={item.image} alt={item.title} />
+          <img src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
         ) : (
           <span>✳</span>
         )}
@@ -240,7 +244,7 @@ export function ArticleCard({ item }: { item: PublicItem }) {
   return (
     <a className="article" href={"/bai/" + item.id}>
       {item.image && (
-        <img className="article-image" src={item.image} alt={item.title} />
+        <img className="article-image" src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
       )}
       <div className="article-body">
         <p className="eyebrow green">BÀI VIẾT</p>
@@ -254,7 +258,7 @@ export function ArticleCard({ item }: { item: PublicItem }) {
 export function LotCard({ lot }: { lot: PublicLot }) {
   return (
     <a href={`/lo/${lot.id}`} className="lot-card">
-      {lot.image ? <img src={lot.image} alt={lot.title} /> : <div className="lot-image">✳</div>}
+      {lot.image ? <img src={lot.image} alt={lot.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" /> : <div className="lot-image">✳</div>}
       <div className="lot-card-body">
         <p className="eyebrow green">LÔ {lot.code} · CÒN HÀNG</p>
         <h3>{lot.title}</h3>

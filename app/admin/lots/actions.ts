@@ -2,11 +2,12 @@
 
 import { env } from "cloudflare:workers";
 import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
 import { inventoryLots, inventoryMovements } from "@/db/schema";
 import { requireAdmin, requireOwner } from "../auth";
+import { PUBLIC_LOT_TAG } from "@/app/data";
 
 const lotPath = "/admin/lots";
 const codePattern = /^[A-Z0-9][A-Z0-9_-]{2,39}$/;
@@ -63,6 +64,7 @@ async function lotValues(formData: FormData) {
 }
 function go(path: string, key: "notice" | "error", message: string): never { redirect(`${path}?${key}=${encodeURIComponent(message)}`); }
 function revalidateLot(id?: number) {
+  updateTag(PUBLIC_LOT_TAG);
   revalidatePath("/"); revalidatePath("/lo-si"); revalidatePath(lotPath);
   if (id) { revalidatePath(`/lo/${id}`); revalidatePath(`${lotPath}/${id}`); }
 }

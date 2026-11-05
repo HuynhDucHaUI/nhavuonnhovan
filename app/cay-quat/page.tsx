@@ -1,5 +1,5 @@
 import { SiteFooter, SiteHeader } from "../components/site-chrome";
-import { publicData } from "../data";
+import { publicEntriesPage } from "../data";
 import { PlantCard } from "../page";
 
 export const dynamic = "force-dynamic";
@@ -7,11 +7,11 @@ const perPage = 9;
 
 export default async function PlantsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const { page: rawPage } = await searchParams;
-  const { items } = await publicData();
-  const plants = items.filter((item) => item.kind === "plant");
-  const pageCount = Math.max(1, Math.ceil(plants.length / perPage));
+  const requestedPage = Math.max(1, Number(rawPage) || 1);
+  const { items: plants, total } = await publicEntriesPage("plant", requestedPage, perPage);
+  const pageCount = Math.max(1, Math.ceil(total / perPage));
   const page = Math.max(1, Math.min(pageCount, Number(rawPage) || 1));
-  const shown = plants.slice((page - 1) * perPage, page * perPage);
+  const shown = page === requestedPage ? plants : (await publicEntriesPage("plant", page, perPage)).items;
   return <><SiteHeader/><main className="listing-page"><div className="wrap"><a className="back-link" href="/">← Về trang chủ</a><p className="eyebrow green">CÂY QUẤT TẠI NHÀ VƯỜN</p><h1>Chọn một cây <em>thật ưng ý.</em></h1><p className="listing-intro">Khám phá các cây quất cảnh đang được Nhà vườn Nho Văn cập nhật.</p>{shown.length ? <div className="grid listing-grid">{shown.map((item) => <PlantCard item={item} key={item.id}/>)}</div> : <p className="muted">Chưa có cây quất được xuất bản.</p>}<Pagination page={page} pageCount={pageCount} path="/cay-quat"/></div></main><SiteFooter/></>;
 }
 

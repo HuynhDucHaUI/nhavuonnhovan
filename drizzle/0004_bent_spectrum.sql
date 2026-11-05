@@ -1,0 +1,1 @@
+CREATE INDEX `entries_public_feed_idx` ON `entries` (`published`,`kind`,`id`);
