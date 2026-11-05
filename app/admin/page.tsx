@@ -1,0 +1,15 @@
+import { env } from "cloudflare:workers";
+import { requireChatGPTUser } from "@/app/chatgpt-auth";
+import { getDb } from "@/db";
+import { entries, settings } from "@/db/schema";
+import { desc } from "drizzle-orm";
+import { saveEntry, saveSettings } from "./actions";
+export const dynamic="force-dynamic";
+export default async function Admin(){
+ const user=await requireChatGPTUser("/admin"); const admin=(env as unknown as {ADMIN_EMAIL?:string}).ADMIN_EMAIL;
+ if(!admin || admin.toLowerCase()!==user.email.toLowerCase())return <main className="wrap detail"><h1>Chưa có quyền quản trị</h1><p>Liên hệ chủ website để thiết lập tài khoản quản trị.</p><a href="/">Về trang chủ</a></main>;
+ const db=getDb(); const [items,rows]=await Promise.all([db.select().from(entries).orderBy(desc(entries.id)),db.select().from(settings)]); const config=Object.fromEntries(rows.map(x=>[x.key,x.value]));
+ return <main className="wrap admin"><a href="/">← Xem website</a><h1>Quản trị nhà vườn</h1><p>Đăng nhập: {user.email}</p><section><h2>Thông tin liên hệ</h2><form action={saveSettings} className="form"><label>Điện thoại<input name="phone" defaultValue={config.phone}/></label><label>Liên kết Zalo (https)<input name="zalo" type="url" defaultValue={config.zalo}/></label><label>Liên kết Google Maps (https)<input name="map" type="url" defaultValue={config.map}/></label><button>Lưu liên hệ</button></form></section><section><h2>Thêm cây hoặc bài viết</h2><EntryForm/></section><section><h2>Nội dung đã tạo</h2>{items.length===0&&<p>Chưa có nội dung.</p>}{items.map(item=><details key={item.id}><summary>{item.title} — {item.published?"Đã đăng":"Bản nháp"}</summary><EntryForm item={item}/></details>)}</section></main>
+}
+type Item=typeof entries.$inferSelect;
+function EntryForm({item}:{item?:Item}){return <form action={saveEntry} className="form"><input type="hidden" name="id" value={item?.id||""}/><label>Loại nội dung<select name="kind" defaultValue={item?.kind||"plant"}><option value="plant">Cây quất</option><option value="article">Bài viết</option></select></label><label>Tiêu đề<input name="title" required maxLength={150} defaultValue={item?.title}/></label><label>Mã cây<input name="code" defaultValue={item?.code}/></label><label>Giá hoặc thông tin giá<input name="price" defaultValue={item?.price}/></label><label>Trạng thái<select name="status" defaultValue={item?.status||"contact"}><option value="contact">Liên hệ</option><option value="available">Còn tại vườn</option><option value="sold">Đã bán</option></select></label><label>Liên kết ảnh HTTPS<input type="url" name="image" defaultValue={item?.image}/></label><label>Nội dung<textarea name="description" rows={7} defaultValue={item?.description}/></label><label className="check"><input type="checkbox" name="published" defaultChecked={item?.published===1}/> Xuất bản công khai</label><button>Lưu nội dung</button></form>}
