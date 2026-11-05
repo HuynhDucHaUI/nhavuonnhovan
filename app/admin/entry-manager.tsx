@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, FilePenLine, Home, Image, LogOut, Menu, MoreVertical, Pencil, Plus, Search, Settings, Trash2, Trees, Upload, Users, X } from "lucide-react";
-import { deleteEntry, saveEntry, saveSettings } from "./actions";
+import { deleteEntry, logoutAction, saveEntry, saveSettings } from "./actions";
 import type { entries } from "@/db/schema";
 
 type Item = typeof entries.$inferSelect;
@@ -14,8 +14,9 @@ const pageSize = 10;
 const statusLabel = { available: "Còn tại vườn", sold: "Đã bán", contact: "Liên hệ" } as const;
 const typeLabel = { plant: "Cây quất", article: "Bài viết" } as const;
 const dashboardStyles = `.admin-nav button{display:flex;align-items:center;gap:13px;width:100%;padding:12px;border:0;border-radius:8px;background:transparent;color:#eaf5ff;text-align:left;font:600 14px DM Sans,sans-serif;cursor:pointer}.admin-nav button:hover,.admin-nav button.active{background:#087dc3}.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px}.overview-grid>div{padding:24px;background:#fff;border-radius:14px;box-shadow:0 5px 24px #174a6810}.overview-grid span,.overview-grid small{display:block;color:#708798;font-size:13px}.overview-grid b{display:block;margin:12px 0 8px;font-size:38px;color:#086aa9}.overview-card{background:linear-gradient(115deg,#07558e,#0d79b5);border-radius:14px;padding:30px;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:24px}.overview-card h2{font-family:DM Sans,sans-serif;font-size:22px;font-weight:700}.overview-card p{max-width:520px;color:#e2f3ff;line-height:1.7}.overview-card>div:last-child{display:flex;gap:10px;flex-wrap:wrap}.overview-card .secondary-button{background:#fff;color:#086aa9}.overview-card .plain-button{background:#ffffff18;border-color:#ffffff55;color:#fff}.help-panel{padding:24px;line-height:1.8;color:#526e80}.help-panel h3{font-family:DM Sans,sans-serif;font-size:20px;color:#23445b}.help-panel a{display:inline-block;color:#0870b2;font-weight:700;margin-top:10px}@media(max-width:700px){.overview-grid{grid-template-columns:1fr}.overview-card{align-items:flex-start;flex-direction:column}}`;
+const accountNavStyles = `.admin-nav a{display:flex;align-items:center;gap:13px;width:100%;padding:12px;border-radius:8px;color:#eaf5ff;text-decoration:none;font:600 14px DM Sans,sans-serif}.admin-nav a:hover{background:#087dc3}.sidebar-bottom form{margin:0}.sidebar-bottom form button{display:flex;align-items:center;gap:13px;width:100%;padding:12px;border:0;border-radius:8px;background:transparent;color:#eaf5ff;font:600 14px DM Sans,sans-serif;cursor:pointer}.sidebar-bottom form button:hover{background:#087dc3}.topbar-actions form{margin:0}.topbar-actions .logout-link{display:flex;align-items:center;gap:8px;border:0;background:transparent;font:600 13px DM Sans,sans-serif;padding:9px 11px;border-radius:6px;cursor:pointer}.topbar-actions .logout-link:hover{background:#fff0f0}`;
 
-export function EntryManager({ items, logoutPath, contact }: { items: Item[]; logoutPath: string; contact: Contact }) {
+export function EntryManager({ items, contact, user }: { items: Item[]; contact: Contact; user: { displayName: string; role: "owner" | "staff" } }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState("all");
@@ -45,7 +46,7 @@ export function EntryManager({ items, logoutPath, contact }: { items: Item[]; lo
     setSidebarOpen(false);
   }
 
-  return <><style>{dashboardStyles}</style><div className="admin-shell">
+  return <><style>{dashboardStyles + accountNavStyles}</style><div className="admin-shell">
     <aside className={sidebarOpen ? "admin-sidebar open" : "admin-sidebar"}>
       <div className="admin-brand"><span className="admin-brand-mark">✳</span><span>NHÀ VƯỜN<br/><b>NHO VĂN</b></span><button className="sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Đóng menu"><X size={20}/></button></div>
       <p className="sidebar-caption">HỆ THỐNG QUẢN TRỊ</p>
@@ -54,17 +55,18 @@ export function EntryManager({ items, logoutPath, contact }: { items: Item[]; lo
         <button className={screen === "content" && kind === "all" ? "active" : ""} onClick={() => navigate("content", "all")}><FilePenLine size={18}/>Quản lý nội dung</button>
         <button className={screen === "content" && kind === "plant" ? "active" : ""} onClick={() => navigate("content", "plant")}><Trees size={18}/>Cây quất</button>
         <button className={screen === "content" && kind === "article" ? "active" : ""} onClick={() => navigate("content", "article")}><BookOpen size={18}/>Bài viết</button>
+        {user.role === "owner" && <a href="/admin/users"><Users size={18}/>Quản lý tài khoản</a>}
         <button onClick={() => {setModal("contact");setSidebarOpen(false)}}><Users size={18}/>Thông tin liên hệ</button>
         <a href="/"><Image size={18}/>Xem website</a>
         <button onClick={() => {setModal("help");setSidebarOpen(false)}}><CircleHelp size={18}/>Hỗ trợ</button>
       </nav>
-      <div className="sidebar-bottom"><a href={logoutPath}><LogOut size={18}/>Đăng xuất</a></div>
+      <div className="sidebar-bottom"><form action={logoutAction}><button type="submit"><LogOut size={18}/>Đăng xuất</button></form></div>
     </aside>
     <div className="admin-main">
       <header className="admin-topbar">
         <button className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Mở menu"><Menu size={21}/></button>
         <p>Trang chủ <span>›</span> <b>{screen === "overview" ? "Tổng quan" : "Quản lý nội dung"}</b></p>
-        <div className="topbar-actions"><a href="/"><Home size={18}/><span>Website</span></a><a href={logoutPath} className="logout-link"><LogOut size={18}/><span>Đăng xuất</span></a></div>
+        <div className="topbar-actions"><a href="/"><Home size={18}/><span>Website</span></a><form action={logoutAction}><button type="submit" className="logout-link"><LogOut size={18}/><span>Đăng xuất</span></button></form></div>
       </header>
       <main className="admin-content" id="quan-ly-noi-dung">
         {screen === "overview" ? <Overview items={items} onOpenContent={() => navigate("content", "all")} onCreate={() => open("create")} onContact={() => setModal("contact")}/> : <>

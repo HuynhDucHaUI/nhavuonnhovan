@@ -1,9 +1,10 @@
 "use server";
-import { authorize } from "./auth";
+import { authorize, destroySession } from "./auth";
 import { getDb } from "@/db";
 import { entries, settings } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 function val(f:FormData,key:string,max=2000){return String(f.get(key)||"").trim().slice(0,max)}
 function url(s:string){if(!s)return "";try {const u=new URL(s);return u.protocol==="https:"?u.toString():""}catch{return ""}}
 function imageUrl(s:string){return /^\/api\/images\/[0-9a-f-]{36}$/.test(s)?s:url(s)}
@@ -34,4 +35,9 @@ export async function deleteEntry(id:number){
 }
 export async function saveSettings(f:FormData){
  await authorize();const db=getDb();for(const key of ["phone","phone2","map","zalo"]){let value=val(f,key,2048);if(key!=="phone"&&key!=="phone2")value=url(value);else value=value.replace(/[^+0-9\s()-]/g,"");await db.insert(settings).values({key,value}).onConflictDoUpdate({target:settings.key,set:{value}})} revalidatePath("/");revalidatePath("/admin");
+}
+
+export async function logoutAction(){
+ await destroySession();
+ redirect("/");
 }
