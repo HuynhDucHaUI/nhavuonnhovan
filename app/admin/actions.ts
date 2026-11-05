@@ -20,5 +20,5 @@ export async function saveEntry(f:FormData){
  revalidatePath("/");revalidatePath("/admin");
 }
 export async function saveSettings(f:FormData){
- await authorize();const db=getDb();for(const key of ["phone","map","zalo"]){let value=val(f,key,2048);if(key!=="phone")value=url(value);else value=value.replace(/[^+0-9\s()-]/g,"");await db.insert(settings).values({key,value}).onConflictDoUpdate({target:settings.key,set:{value}})} revalidatePath("/");revalidatePath("/admin");
+ await authorize();const db=getDb();for(const key of ["phone","phone2","map","zalo"]){let value=val(f,key,2048);if(key!=="phone"&&key!=="phone2")value=url(value);else value=value.replace(/[^+0-9\s()-]/g,"");await db.insert(settings).values({key,value}).onConflictDoUpdate({target:settings.key,set:{value}})} revalidatePath("/");revalidatePath("/admin");
 }
