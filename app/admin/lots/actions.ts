@@ -74,7 +74,7 @@ export async function createLotAction(formData: FormData) {
     const quantity = positiveInteger(formData.get("initial_quantity"), "Số lượng ban đầu");
     const now = new Date().toISOString();
     const result = await env.DB.batch([
-      env.DB.prepare(`INSERT INTO inventory_lots (code,title,plant_type,size_or_age,location,initial_quantity,quantity_remaining,minimum_order_quantity,unit,wholesale_price,image,description,status,published,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(values.code, values.title, values.plantType, values.sizeOrAge, values.location, quantity, quantity, values.minimumOrderQuantity, values.unit, values.wholesalePrice, values.image, values.description, "available", values.published, now, now),
+      env.DB.prepare(`INSERT INTO inventory_lots (code,title,plant_type,size_or_age,location,initial_quantity,quantity_remaining,minimum_order_quantity,unit,wholesale_price,image,description,status,published,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(values.code, values.title, values.plantType, values.sizeOrAge, values.location, quantity, quantity, values.minimumOrderQuantity, values.unit, values.wholesalePrice, values.image, values.description, "available", values.published, now, now),
       env.DB.prepare(`INSERT INTO inventory_movements (lot_id,type,quantity,note,actor_user_id,created_at) SELECT id,'in',?,?,?,? FROM inventory_lots WHERE code=? AND created_at=?`).bind(quantity, "Tạo lô mới", actor.id, now, values.code, now),
     ]);
     if (result[0].meta.changes !== 1 || result[1].meta.changes !== 1) throw new Error("Không thể tạo lô.");
