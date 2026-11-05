@@ -1,0 +1,15 @@
+:root {
+  --font-be-vietnam: "Be Vietnam Pro", "Be Vietnam Pro Fallback", Arial, sans-serif;
+}
+
+/* Applies equally to the public pages and every admin surface, including inline admin styles. */
+html body,
+html body * {
+  font-family: var(--font-be-vietnam) !important;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 700;
+}
