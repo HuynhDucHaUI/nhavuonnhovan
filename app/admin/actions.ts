@@ -39,5 +39,5 @@ export async function saveSettings(f:FormData){
 
 export async function logoutAction(){
  await destroySession();
- redirect("/admin/login?notice=signed_out");
+ redirect("/admin/login");
 }
