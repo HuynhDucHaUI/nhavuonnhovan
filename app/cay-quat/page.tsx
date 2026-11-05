@@ -1,0 +1,21 @@
+import { SiteFooter, SiteHeader } from "../components/site-chrome";
+import { publicData } from "../data";
+import { PlantCard } from "../page";
+
+export const dynamic = "force-dynamic";
+const perPage = 9;
+
+export default async function PlantsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  const { page: rawPage } = await searchParams;
+  const { items } = await publicData();
+  const plants = items.filter((item) => item.kind === "plant");
+  const pageCount = Math.max(1, Math.ceil(plants.length / perPage));
+  const page = Math.max(1, Math.min(pageCount, Number(rawPage) || 1));
+  const shown = plants.slice((page - 1) * perPage, page * perPage);
+  return <><SiteHeader/><main className="listing-page"><div className="wrap"><a className="back-link" href="/">← Về trang chủ</a><p className="eyebrow green">CÂY QUẤT TẠI NHÀ VƯỜN</p><h1>Chọn một cây <em>thật ưng ý.</em></h1><p className="listing-intro">Khám phá các cây quất cảnh đang được Nhà vườn Nho Văn cập nhật.</p>{shown.length ? <div className="grid listing-grid">{shown.map((item) => <PlantCard item={item} key={item.id}/>)}</div> : <p className="muted">Chưa có cây quất được xuất bản.</p>}<Pagination page={page} pageCount={pageCount} path="/cay-quat"/></div></main><SiteFooter/></>;
+}
+
+function Pagination({ page, pageCount, path }: { page: number; pageCount: number; path: string }) {
+  if (pageCount <= 1) return null;
+  return <nav className="public-pagination" aria-label="Phân trang"><a className={page === 1 ? "disabled" : ""} href={page === 1 ? undefined : path+"?page="+(page-1)}>← Trước</a>{Array.from({length:pageCount},(_,index) => index+1).map((number) => <a key={number} className={number === page ? "active" : ""} href={path+"?page="+number}>{number}</a>)}<a className={page === pageCount ? "disabled" : ""} href={page === pageCount ? undefined : path+"?page="+(page+1)}>Sau →</a></nav>;
+}
