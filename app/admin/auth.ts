@@ -12,6 +12,7 @@ const SESSION_COOKIE = "nhovan_admin_session";
 const SESSION_SECONDS = 8 * 60 * 60;
 const MAX_LOGIN_FAILURES = 5;
 const LOCK_MINUTES = 15;
+const PASSWORD_ITERATIONS = 100000;
 
 function now() { return new Date(); }
 function timestamp(date = now()) { return date.toISOString(); }
@@ -43,7 +44,7 @@ async function digest(value: string) {
 
 async function passwordHash(password: string, salt: string) {
   const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: base64ToBytes(salt), iterations: 210000, hash: "SHA-256" }, key, 256);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt: base64ToBytes(salt), iterations: PASSWORD_ITERATIONS, hash: "SHA-256" }, key, 256);
   return bytesToBase64(new Uint8Array(bits));
 }
 
