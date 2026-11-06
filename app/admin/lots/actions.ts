@@ -35,6 +35,7 @@ function imageUrl(value: string) {
 }
 async function uploadImage(formData: FormData) {
   const manualImage = imageUrl(text(formData, "image", 2048));
+  if (manualImage) return manualImage;
   const file = formData.get("photo");
   if (!(file instanceof File) || !file.size) return manualImage;
   if (file.size > 5 * 1024 * 1024) throw new Error("Ảnh phải nhỏ hơn hoặc bằng 5 MB.");

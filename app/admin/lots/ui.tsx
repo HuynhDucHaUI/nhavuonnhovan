@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { logoutAction } from "../actions";
+export { LotForm } from "./lot-form";
 
 export type LotRecord = {
   id: number; code: string; title: string; plantType: string; sizeOrAge: string; location: string;
@@ -19,22 +20,4 @@ export function LotsAdminFrame({ children, user, title }: { children: React.Reac
 export function Notice({ notice, error }: { notice?: string; error?: string }) {
   if (!notice && !error) return null;
   return <p className={error ? "notice error" : "notice"} role={error ? "alert" : "status"}>{error || notice}</p>;
-}
-
-export function LotForm({ lot, action, submitLabel }: { lot?: LotRecord; action: (formData: FormData) => Promise<void>; submitLabel: string }) {
-  return <form action={action} className="lot-form">{lot && <input type="hidden" name="lot_id" value={lot.id} />}<div className="lot-form-grid">
-    <label>Mã lô<input name="code" required minLength={3} maxLength={40} defaultValue={lot?.code} placeholder="Ví dụ: LUONG-A01" /></label>
-    <label>Tên lô<input name="title" required maxLength={150} defaultValue={lot?.title} placeholder="Ví dụ: Quất chum 1,2–1,5 m" /></label>
-    <label>Loại / dáng cây<input name="plant_type" required maxLength={100} defaultValue={lot?.plantType} placeholder="Ví dụ: Quất chum" /></label>
-    <label>Kích thước / độ tuổi<input name="size_or_age" maxLength={120} defaultValue={lot?.sizeOrAge} placeholder="Ví dụ: 1,2–1,5 m" /></label>
-    <label>Vị trí luống<input name="location" maxLength={120} defaultValue={lot?.location} placeholder="Ví dụ: Khu A, luống 01" /></label>
-    {!lot ? <label>Số lượng ban đầu<input name="initial_quantity" type="number" min="1" required placeholder="Ví dụ: 180" /></label> : <label>Thông tin tồn kho<input value={`${lot.quantityRemaining} ${lot.unit} (chỉ đổi qua giao dịch kho)`} readOnly /></label>}
-    <label>Mức mua tối thiểu<input name="minimum_order_quantity" type="number" min="1" required defaultValue={lot?.minimumOrderQuantity || 1} /></label>
-    <label>Đơn vị<input name="unit" maxLength={20} defaultValue={lot?.unit || "cây"} placeholder="cây" /></label>
-    <label>Giá sỉ / thông tin giá<input name="wholesale_price" maxLength={100} defaultValue={lot?.wholesalePrice} placeholder="Ví dụ: Từ 350.000đ/cây" /></label>
-    <label>Tải ảnh lên<input name="photo" type="file" accept="image/jpeg,image/png,image/webp" /><small>JPEG, PNG hoặc WebP, tối đa 5 MB</small></label>
-    <label>Liên kết ảnh HTTPS<input name="image" type="url" maxLength={2048} defaultValue={lot?.image} placeholder="https://..." /></label>
-    <label className="wide">Mô tả<textarea name="description" defaultValue={lot?.description} placeholder="Nêu đặc điểm của cả lô, thời gian lấy hàng, lưu ý..." /></label>
-    <label className="check-line wide"><input type="checkbox" name="published" defaultChecked={lot?.published === 1} />Công khai lô này trên website khi còn hàng</label>
-  </div><div><button className="lots-primary" type="submit">{submitLabel}</button></div></form>;
 }

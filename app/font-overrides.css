@@ -13,3 +13,19 @@ h2,
 h3 {
   font-weight: 700;
 }
+
+.upload-status {
+  margin: 0 0 14px;
+  color: #166d4e;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.upload-status.preparing,
+.upload-status.uploading {
+  color: #087cbd;
+}
+
+.upload-status.error {
+  color: #b32b2b;
+}

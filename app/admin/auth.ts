@@ -7,6 +7,7 @@ import { adminSessions, adminUsers } from "@/db/schema";
 
 export type AdminRole = "owner" | "staff";
 export type AdminUser = typeof adminUsers.$inferSelect;
+export type CurrentAdmin = Pick<AdminUser, "id" | "username" | "displayName" | "role" | "status">;
 
 const SESSION_COOKIE = "nhovan_admin_session";
 const SESSION_SECONDS = 8 * 60 * 60;
@@ -97,17 +98,20 @@ export async function destroySession() {
 
 export async function revokeUserSessions(userId: number) { await getDb().delete(adminSessions).where(eq(adminSessions.userId, userId)); }
 
-export async function currentAdmin(): Promise<AdminUser | null> {
+export async function currentAdmin(): Promise<CurrentAdmin | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
   const db = getDb();
-  const rows = await db.select({ session: adminSessions, user: adminUsers }).from(adminSessions)
+  const rows = await db.select({
+    id: adminUsers.id,
+    username: adminUsers.username,
+    displayName: adminUsers.displayName,
+    role: adminUsers.role,
+    status: adminUsers.status,
+  }).from(adminSessions)
     .innerJoin(adminUsers, eq(adminSessions.userId, adminUsers.id))
     .where(and(eq(adminSessions.tokenHash, await digest(token)), gt(adminSessions.expiresAt, timestamp()), eq(adminUsers.status, "active"))).limit(1);
-  const found = rows[0];
-  if (!found) return null;
-  await db.update(adminSessions).set({ lastSeenAt: timestamp(), expiresAt: later(SESSION_SECONDS) }).where(eq(adminSessions.id, found.session.id));
-  return found.user;
+  return rows[0] || null;
 }
 
 export async function isAdmin() { return Boolean(await currentAdmin()); }
