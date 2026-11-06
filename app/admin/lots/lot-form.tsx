@@ -80,10 +80,10 @@ export function LotForm({ lot, action, submitLabel }: { lot?: LotFormLot; action
         const file = event.currentTarget.files?.[0];
         if (file) void uploadPhoto(file);
       }} /><small>JPEG, PNG hoặc WebP, tối đa 5 MB. Ảnh được tải nền ngay khi chọn.</small></label>
-      <label>Liên kết ảnh HTTPS<input name="image" type="url" maxLength={2048} value={image} onChange={(event) => {
+      <label>Liên kết ảnh HTTPS hoặc ảnh đã tải lên<input name="image" type="text" inputMode="url" maxLength={2048} value={image} onChange={(event) => {
         selectedPhoto.current = false;
         setImage(event.target.value);
-      }} placeholder="https://..." /></label>
+      }} placeholder="https://... hoặc /api/images/..." /><small>Chấp nhận URL HTTPS hoặc đường dẫn ảnh do hệ thống tải lên.</small></label>
       <label className="wide">Mô tả<textarea name="description" defaultValue={lot?.description} placeholder="Nêu đặc điểm của cả lô, thời gian lấy hàng, lưu ý..." /></label>
       <label className="check-line wide"><input type="checkbox" name="published" defaultChecked={lot?.published === 1} />Công khai lô này trên website khi còn hàng</label>
     </div>
