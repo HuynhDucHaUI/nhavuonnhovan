@@ -9,7 +9,7 @@ import type { entries } from "@/db/schema";
 type Item = typeof entries.$inferSelect;
 type Notice = { text: string; error: boolean } | null;
 type Modal = "create" | "edit" | "detail" | "delete" | "contact" | "help" | null;
-type Contact = { phone: string; phone2: string; zalo: string; map: string };
+type Contact = { phone: string; phone2: string; zalo: string; facebook: string; map: string };
 const pageSize = 10;
 const statusLabel = { available: "Còn tại vườn", sold: "Đã bán", contact: "Liên hệ" } as const;
 const typeLabel = { plant: "Cây quất", article: "Bài viết" } as const;
@@ -135,6 +135,6 @@ function EntryForm({item,onComplete}:{item?:Item;onComplete:(notice:NonNullable<
 function ContactForm({contact,onComplete}:{contact:Contact;onComplete:(notice:NonNullable<Notice>)=>void}) {
   const [pending,startTransition]=useTransition(); const [error,setError]=useState("");
   function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();const data=new FormData(event.currentTarget);setError("");startTransition(async()=>{try{await saveSettings(data);onComplete({text:"Đã lưu thông tin liên hệ thành công.",error:false})}catch{setError("Không thể lưu thông tin liên hệ. Vui lòng thử lại.")}})}
-  return <form className="content-form" onSubmit={submit}><div className="form-grid"><label>Điện thoại<input name="phone" defaultValue={contact.phone}/></label><label>Điện thoại thứ hai<input name="phone2" defaultValue={contact.phone2}/></label><label className="wide">Liên kết Zalo<input name="zalo" type="url" defaultValue={contact.zalo} placeholder="https://zalo.me/..."/></label><label className="wide">Liên kết Google Maps<input name="map" type="url" defaultValue={contact.map} placeholder="https://maps.app.goo.gl/..."/></label></div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":"Lưu thông tin"}</button></div></form>
+  return <form className="content-form" onSubmit={submit}><div className="form-grid"><label>Điện thoại<input name="phone" defaultValue={contact.phone}/></label><label>Điện thoại thứ hai<input name="phone2" defaultValue={contact.phone2}/></label><label className="wide">Liên kết Zalo<input name="zalo" type="url" defaultValue={contact.zalo} placeholder="https://zalo.me/..."/></label><label className="wide">Liên kết Facebook<input name="facebook" type="url" defaultValue={contact.facebook} placeholder="https://www.facebook.com/..."/></label><label className="wide">Liên kết Google Maps<input name="map" type="url" defaultValue={contact.map} placeholder="https://maps.app.goo.gl/..."/></label></div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":"Lưu thông tin"}</button></div></form>
 }
 function formatDate(value:string){const date=new Date(value);return Number.isNaN(date.valueOf())?"—":date.toLocaleDateString("vi-VN",{day:"2-digit",month:"2-digit",year:"numeric"})}

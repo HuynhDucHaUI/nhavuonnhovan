@@ -12,11 +12,15 @@ const defaultContact = {
   phone: "0389982886",
   phone2: "0929623366",
   map: "https://maps.app.goo.gl/cvyNhEr1g2qzNuBS8",
-  zalo: "",
+  zalo: "https://zalo.me/0389982886",
+  facebook: "https://www.facebook.com/profile.php?id=61554829266477",
 };
 
 function contactFrom(rows: { key: string; value: string }[]) {
-  return { ...defaultContact, ...Object.fromEntries(rows.map((row) => [row.key, row.value])) };
+  return {
+    ...defaultContact,
+    ...Object.fromEntries(rows.filter((row) => row.value.trim()).map((row) => [row.key, row.value])),
+  };
 }
 
 export async function publicContact() {

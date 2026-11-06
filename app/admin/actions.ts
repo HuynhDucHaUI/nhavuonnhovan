@@ -35,7 +35,7 @@ export async function deleteEntry(id:number){
  updateTag(PUBLIC_ENTRY_TAG); revalidatePath("/");revalidatePath("/admin");revalidatePath("/bai/"+id);
 }
 export async function saveSettings(f:FormData){
- await authorize();const db=getDb();for(const key of ["phone","phone2","map","zalo"]){let value=val(f,key,2048);if(key!=="phone"&&key!=="phone2")value=url(value);else value=value.replace(/[^+0-9\s()-]/g,"");await db.insert(settings).values({key,value}).onConflictDoUpdate({target:settings.key,set:{value}})} updateTag(PUBLIC_SETTINGS_TAG); revalidatePath("/");revalidatePath("/admin");
+ await authorize();const db=getDb();for(const key of ["phone","phone2","map","zalo","facebook"]){let value=val(f,key,2048);if(key!=="phone"&&key!=="phone2")value=url(value);else value=value.replace(/[^+0-9\s()-]/g,"");await db.insert(settings).values({key,value}).onConflictDoUpdate({target:settings.key,set:{value}})} updateTag(PUBLIC_SETTINGS_TAG); revalidatePath("/");revalidatePath("/admin");
 }
 
 export async function logoutAction(){

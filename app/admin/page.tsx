@@ -14,6 +14,6 @@ export default async function Admin() {
     db.select().from(settings),
   ]);
   const saved = Object.fromEntries(settingRows.map((row) => [row.key, row.value]));
-  const contact = { phone: saved.phone || "0389982886", phone2: saved.phone2 || "0929623366", zalo: saved.zalo || "", map: saved.map || "https://maps.app.goo.gl/cvyNhEr1g2qzNuBS8" };
+  const contact = { phone: saved.phone || "0389982886", phone2: saved.phone2 || "0929623366", zalo: saved.zalo || "https://zalo.me/0389982886", facebook: saved.facebook || "https://www.facebook.com/profile.php?id=61554829266477", map: saved.map || "https://maps.app.goo.gl/cvyNhEr1g2qzNuBS8" };
   return <EntryManager items={items} contact={contact} user={{ displayName: user.displayName, role: user.role }} />;
 }

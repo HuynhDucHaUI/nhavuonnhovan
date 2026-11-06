@@ -16,7 +16,7 @@ export default async function Home() {
         "@context": "https://schema.org", "@type": "LocalBusiness", name: SITE_NAME,
         url: SITE_URL, description: "Nhà vườn quất cảnh Nho Văn, nhận bán sỉ quất cảnh trên toàn quốc.",
         telephone: config.phone, address: { "@type": "PostalAddress", streetAddress: "Thôn CD Quán Trạch, Xã Văn Giang", addressRegion: "Hưng Yên", addressCountry: "VN" },
-        areaServed: { "@type": "Country", name: "Việt Nam" }, sameAs: config.zalo ? [config.zalo] : [],
+        areaServed: { "@type": "Country", name: "Việt Nam" }, sameAs: [config.zalo, config.facebook].filter(Boolean),
       }) }} />
       <SiteHeader />
       <main>
