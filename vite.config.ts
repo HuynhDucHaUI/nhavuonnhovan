@@ -11,19 +11,33 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
 
 const { d1, r2 } = hostingConfig;
 
+/**
+ * The managed Sites host injects the placeholder bindings declared below.
+ * A personal Cloudflare deployment supplies the real resource names and D1 id
+ * through environment variables in GitHub Actions (or a local shell).
+ */
+const cloudflareWorkerName = process.env.CLOUDFLARE_WORKER_NAME;
+const cloudflareD1DatabaseName =
+  process.env.CLOUDFLARE_D1_DATABASE_NAME ?? "site-creator-d1";
+const cloudflareD1DatabaseId =
+  process.env.CLOUDFLARE_D1_DATABASE_ID ?? SITE_CREATOR_PLACEHOLDER_DATABASE_ID;
+const cloudflareR2BucketName =
+  process.env.CLOUDFLARE_R2_BUCKET_NAME ?? "site-creator-r2";
+
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
 
 const localBindingConfig = {
+  ...(cloudflareWorkerName ? { name: cloudflareWorkerName } : {}),
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
   d1_databases: d1
     ? [
         {
           binding: d1,
-          database_name: "site-creator-d1",
-          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_name: cloudflareD1DatabaseName,
+          database_id: cloudflareD1DatabaseId,
         },
       ]
     : [],
@@ -31,7 +45,7 @@ const localBindingConfig = {
     ? [
         {
           binding: r2,
-          bucket_name: "site-creator-r2",
+          bucket_name: cloudflareR2BucketName,
         },
       ]
     : [],
