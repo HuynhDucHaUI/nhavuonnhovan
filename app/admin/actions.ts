@@ -9,10 +9,22 @@ import { PUBLIC_ENTRY_TAG, PUBLIC_SETTINGS_TAG } from "@/app/data";
 function val(f:FormData,key:string,max=2000){return String(f.get(key)||"").trim().slice(0,max)}
 function url(s:string){if(!s)return "";try {const u=new URL(s);return u.protocol==="https:"?u.toString():""}catch{return ""}}
 function imageUrl(s:string){return /^\/api\/images\/[0-9a-f-]{36}$/.test(s)?s:url(s)}
+function galleryUrls(value: string) {
+  try {
+    const values = JSON.parse(value);
+    if (!Array.isArray(values)) return [];
+    return [...new Set(values.map((item) => imageUrl(String(item).trim())).filter(Boolean))].slice(0, 10);
+  } catch {
+    return [];
+  }
+}
 export async function saveEntry(f:FormData){
  await authorize(); const title=val(f,"title",150);if(!title)throw new Error("Cần nhập tiêu đề.");
  const kind=val(f,"kind")==="article"?"article":"plant";const status=val(f,"status");
- const item={title,kind,code:val(f,"code",80),description:val(f,"description",12000),image:imageUrl(val(f,"image",2048)),price:val(f,"price",100),status:["available","sold","contact"].includes(status)?status:"contact",published:f.get("published")?1:0};
+ const requestedImage=imageUrl(val(f,"image",2048));
+ const gallery=kind === "plant" ? galleryUrls(val(f,"gallery",30000)) : [];
+ if (kind === "plant" && requestedImage && !gallery.includes(requestedImage)) gallery.unshift(requestedImage);
+ const item={title,kind,code:val(f,"code",80),description:val(f,"description",12000),image:kind === "plant" ? (gallery[0] || requestedImage) : requestedImage,gallery:JSON.stringify(gallery),price:val(f,"price",100),status:["available","sold","contact"].includes(status)?status:"contact",published:f.get("published")?1:0};
  const operation = val(f,"operation",20);
  const id=Number(f.get("id"));
  const db=getDb();

@@ -29,3 +29,31 @@ h3 {
 .upload-status.error {
   color: #b32b2b;
 }
+
+.plant-gallery-field { border: 1px solid #d8e5ee; border-radius: 10px; padding: 16px; margin: 0; }
+.plant-gallery-field legend { color: #23445b; font-size: 13px; font-weight: 700; padding: 0 5px; }
+.plant-gallery-field > p { color: #6a8293; font-size: 12px; line-height: 1.55; margin: 0 0 12px; }
+.gallery-url-row { display: flex; gap: 8px; margin-top: 10px; }
+.gallery-url-row button { border: 1px solid #a8c9dc; border-radius: 7px; background: #f3f9fd; color: #0873af; cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; padding: 8px 12px; white-space: nowrap; }
+.gallery-message { display: block; color: #b32b2b; margin-top: 8px; }
+.admin-gallery-sort { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+.admin-gallery-item { background: #f4f8fb; border: 1px solid #d3e3ed; border-radius: 8px; cursor: grab; min-width: 0; overflow: hidden; position: relative; }
+.admin-gallery-item img { aspect-ratio: 1; display: block; object-fit: cover; width: 100%; }
+.admin-gallery-item span { color: #315e7b; display: block; font-size: 11px; font-weight: 700; padding: 6px 26px 6px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.admin-gallery-item button { position: absolute; right: 5px; bottom: 4px; border: 0; border-radius: 50%; width: 21px; height: 21px; line-height: 17px; background: #e54b4b; color: #fff; cursor: pointer; font-size: 18px; }
+@media (max-width: 700px) { .admin-gallery-sort { grid-template-columns: repeat(3, minmax(0, 1fr)); } .gallery-url-row { flex-direction: column; } }
+
+.plant-gallery { margin: 28px 0; max-width: 900px; }
+.plant-gallery-main { background: #e5eadf; overflow: hidden; position: relative; }
+.plant-gallery-main > img { display: block; max-height: 650px; object-fit: contain; width: 100%; }
+.plant-gallery-zoom { align-items: center; background: #173e31e8; border: 0; bottom: 14px; color: #fff; cursor: zoom-in; display: inline-flex; font: 700 13px var(--font-be-vietnam); gap: 6px; padding: 9px 12px; position: absolute; right: 14px; }
+.plant-gallery-lens { background-color: #fff; background-repeat: no-repeat; background-size: 260%; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 3px 16px #0b281b66; height: 180px; left: 50%; opacity: 0; pointer-events: none; position: absolute; top: 50%; transform: translate(-50%, -50%); transition: opacity .12s ease; width: 180px; }
+.plant-gallery-lens.visible { opacity: 1; }
+.plant-gallery-thumbnails { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 4px; }
+.plant-gallery-thumbnails button { background: transparent; border: 2px solid transparent; cursor: pointer; flex: 0 0 84px; padding: 0; }
+.plant-gallery-thumbnails button.active { border-color: #b58933; }
+.plant-gallery-thumbnails img { aspect-ratio: 1; display: block; object-fit: cover; width: 100%; }
+.plant-gallery-lightbox { align-items: center; background: #071b13e8; display: flex; inset: 0; justify-content: center; padding: 28px; position: fixed; z-index: 100; }
+.plant-gallery-lightbox img { max-height: 92vh; max-width: 94vw; object-fit: contain; }
+.plant-gallery-lightbox button { background: #fff; border: 0; border-radius: 50%; color: #173e31; cursor: pointer; font-size: 30px; height: 42px; line-height: 35px; position: absolute; right: 20px; top: 20px; width: 42px; }
+@media (max-width: 700px) { .plant-gallery-main > img { max-height: 460px; } .plant-gallery-lens { display: none; } .plant-gallery-zoom span { display: none; } .plant-gallery-zoom { font-size: 22px; padding: 7px 10px; } }

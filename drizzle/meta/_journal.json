@@ -36,6 +36,13 @@
       "when": 1793868374446,
       "tag": "0004_bent_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1794300000000,
+      "tag": "0005_plant_gallery",
+      "breakpoints": true
     }
   ]
 }

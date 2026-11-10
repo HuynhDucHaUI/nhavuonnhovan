@@ -3,7 +3,10 @@ export const entries = sqliteTable("entries", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   kind: text("kind").notNull(), title: text("title").notNull(),
   code: text("code").notNull().default(""), description: text("description").notNull().default(""),
-  image: text("image").notNull().default(""), price: text("price").notNull().default(""),
+  image: text("image").notNull().default(""),
+  /** JSON array of up to ten photos. Used only by public plant listings. */
+  gallery: text("gallery").notNull().default("[]"),
+  price: text("price").notNull().default(""),
   status: text("status").notNull().default("contact"), published: integer("published").notNull().default(0),
   createdAt: text("created_at").notNull()
 }, (table) => [index("entries_public_feed_idx").on(table.published, table.kind, table.id)]);

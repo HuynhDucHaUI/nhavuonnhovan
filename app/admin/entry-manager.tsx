@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, FilePenLine, Home, Image, LogOut, Menu, MoreVertical, Pencil, Plus, Search, Settings, Trash2, Trees, Upload, Users, X } from "lucide-react";
 import { deleteEntry, logoutAction, saveEntry, saveSettings } from "./actions";
+import { PlantGalleryInput, type PlantGalleryItem } from "./plant-gallery-input";
 import type { entries } from "@/db/schema";
 
 type Item = typeof entries.$inferSelect;
@@ -125,13 +126,61 @@ function DeleteModal({ item, onClose, onComplete }: {item:Item;onClose:()=>void;
   return <ContentModal title="Xóa nội dung" onClose={onClose}><div className="delete-dialog"><Trash2 size={28}/><p>Bạn có chắc muốn xóa <b>“{item.title}”</b>?</p><small>Thao tác này không thể hoàn tác.</small>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="plain-button" onClick={onClose}>Hủy</button><button className="danger-button" onClick={remove} disabled={pending}>{pending?"Đang xóa…":"Xóa nội dung"}</button></div></div></ContentModal>;
 }
 
-function EntryForm({item,onComplete}:{item?:Item;onComplete:(notice:NonNullable<Notice>)=>void}) {
-  const [pending,startTransition]=useTransition(); const [error,setError]=useState("");
+/* Retained in history: the former single-image form.
+  const [pending,startTransition]=useTransition(); const [error,setError]=useState(""); const [gallery,setGallery]=useState<PlantGalleryItem[]>([]);
   const [kind,setKind]=useState<"plant"|"article">(item?.kind === "article" ? "article" : "plant");
   function submit(event:FormEvent<HTMLFormElement>) {event.preventDefault();const form=event.currentTarget;const data=new FormData(form);if(item)data.set("id",String(item.id));if(kind === "article"){data.set("code","");data.set("price","");data.set("status","contact")}const file=data.get("photo");setError("");startTransition(async()=>{try{if(file instanceof File&&file.size){if(file.size>5*1024*1024)throw new Error("Ảnh phải nhỏ hơn hoặc bằng 5 MB.");const upload=new FormData();upload.set("file",file);const response=await fetch("/api/upload",{method:"POST",body:upload});const result=await response.json() as {url?:string;error?:string};if(!response.ok||!result.url)throw new Error(result.error||"Không thể tải ảnh lên.");data.set("image",result.url)}data.delete("photo");await saveEntry(data);onComplete({text:item?"Đã lưu thay đổi thành công.":"Đã tạo nội dung thành công.",error:false})}catch(cause){setError(cause instanceof Error?cause.message:"Không thể lưu nội dung. Vui lòng thử lại.")}})}
   const isPlant=kind === "plant";
   return <form onSubmit={submit} className="content-form"><input type="hidden" name="operation" value={item?"update":"create"}/><input type="hidden" name="id" value={item?.id ?? ""}/><div className="form-grid"><label>Loại nội dung<select name="kind" value={kind} onChange={(event)=>setKind(event.target.value === "article" ? "article" : "plant")}><option value="plant">Cây quất — nội dung bán cây</option><option value="article">Bài viết — giới thiệu, chia sẻ</option></select><small>{isPlant ? "Hiển thị tại mục Cây quất trên website." : "Hiển thị tại mục Chuyện từ nhà vườn trên website."}</small></label>{isPlant && <label>Trạng thái cây<select name="status" defaultValue={item?.status||"contact"}><option value="contact">Liên hệ</option><option value="available">Còn tại vườn</option><option value="sold">Đã bán</option></select></label>}<label className="wide">{isPlant ? "Tên cây" : "Tiêu đề bài viết"}<input name="title" required maxLength={150} defaultValue={item?.title} placeholder={isPlant ? "Ví dụ: Quất chum thế đẹp" : "Ví dụ: Cách chọn quất đẹp ngày Tết"}/></label>{isPlant && <><label>Mã cây<input name="code" defaultValue={item?.code} placeholder="Ví dụ: Q-2026-01"/></label><label>Giá hoặc thông tin giá<input name="price" defaultValue={item?.price} placeholder="Ví dụ: Liên hệ để biết giá"/></label></>}<label className="wide upload-field">Ảnh {isPlant ? "cây" : "bìa bài viết"}<input type="file" name="photo" accept="image/jpeg,image/png,image/webp"/><span><Upload size={16}/> JPEG, PNG hoặc WebP, tối đa 5 MB</span></label><label className="wide">Hoặc dùng liên kết ảnh HTTPS<input type="text" name="image" defaultValue={item?.image} placeholder="https://..."/></label><label className="wide">{isPlant ? "Mô tả cây" : "Nội dung bài viết"}<textarea name="description" rows={6} defaultValue={item?.description} placeholder={isPlant ? "Nêu dáng cây, chiều cao, đặc điểm nổi bật..." : "Viết nội dung chia sẻ, thông tin hoặc câu chuyện từ nhà vườn..."}/></label><label className="toggle-field wide"><input type="checkbox" name="published" defaultChecked={item?.published===1}/><span>{isPlant ? "Xuất bản công khai" : "Đăng bài viết công khai"}</span></label></div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":isPlant?"Lưu cây quất":"Đăng bài viết"}</button></div></form>;
+*/
+function EntryForm({item,onComplete}:{item?:Item;onComplete:(notice:NonNullable<Notice>)=>void}) {
+  const [pending,startTransition]=useTransition();
+  const [error,setError]=useState("");
+  const [gallery,setGallery]=useState<PlantGalleryItem[]>([]);
+  const [kind,setKind]=useState<"plant"|"article">(item?.kind === "article" ? "article" : "plant");
+  const isPlant=kind === "plant";
+
+  async function upload(file: File) {
+    const body=new FormData(); body.set("file",file);
+    const response=await fetch("/api/upload",{method:"POST",body});
+    const result=await response.json() as {url?:string;error?:string};
+    if(!response.ok||!result.url) throw new Error(result.error||"Không thể tải ảnh lên.");
+    return result.url;
+  }
+  function submit(event:FormEvent<HTMLFormElement>) {
+    event.preventDefault(); const data=new FormData(event.currentTarget);
+    if(item) data.set("id",String(item.id));
+    if(kind === "article") { data.set("code",""); data.set("price",""); data.set("status","contact"); }
+    setError("");
+    startTransition(async()=>{try {
+      if(isPlant) {
+        const urls: string[]=[];
+        for(const photo of gallery) urls.push(photo.file ? await upload(photo.file) : photo.url || "");
+        data.set("gallery",JSON.stringify(urls.filter(Boolean)));
+        data.set("image","");
+      } else {
+        const photo=data.get("photo");
+        if(photo instanceof File && photo.size) {
+          if(photo.size>5*1024*1024) throw new Error("Ảnh phải nhỏ hơn hoặc bằng 5 MB.");
+          data.set("image",await upload(photo));
+        }
+      }
+      data.delete("photo");
+      await saveEntry(data);
+      onComplete({text:item?"Đã lưu thay đổi thành công.":"Đã tạo nội dung thành công.",error:false});
+    } catch(cause) { setError(cause instanceof Error?cause.message:"Không thể lưu nội dung. Vui lòng thử lại."); }});
+  }
+
+  return <form onSubmit={submit} className="content-form"><input type="hidden" name="operation" value={item?"update":"create"}/><input type="hidden" name="id" value={item?.id ?? ""}/><div className="form-grid">
+    <label>Loại nội dung<select name="kind" value={kind} onChange={(event)=>setKind(event.target.value === "article" ? "article" : "plant")}><option value="plant">Cây quất — nội dung bán cây</option><option value="article">Bài viết — giới thiệu, chia sẻ</option></select><small>{isPlant ? "Hiển thị tại mục Cây quất trên website." : "Hiển thị tại mục Chuyện từ nhà vườn trên website."}</small></label>
+    {isPlant && <label>Trạng thái cây<select name="status" defaultValue={item?.status||"contact"}><option value="contact">Liên hệ</option><option value="available">Còn tại vườn</option><option value="sold">Đã bán</option></select></label>}
+    <label className="wide">{isPlant ? "Tên cây" : "Tiêu đề bài viết"}<input name="title" required maxLength={150} defaultValue={item?.title} placeholder={isPlant ? "Ví dụ: Quất chum thế đẹp" : "Ví dụ: Cách chọn quất đẹp ngày Tết"}/></label>
+    {isPlant && <><label>Mã cây<input name="code" defaultValue={item?.code} placeholder="Ví dụ: Q-2026-01"/></label><label>Giá hoặc thông tin giá<input name="price" defaultValue={item?.price} placeholder="Ví dụ: Liên hệ để biết giá"/></label><PlantGalleryInput image={item?.image || ""} gallery={item?.gallery || "[]"} onChange={setGallery}/></>}
+    {!isPlant && <><label className="wide upload-field">Ảnh bìa bài viết<input type="file" name="photo" accept="image/jpeg,image/png,image/webp"/><span><Upload size={16}/> JPEG, PNG hoặc WebP, tối đa 5 MB</span></label><label className="wide">Hoặc dùng liên kết ảnh HTTPS<input type="text" name="image" defaultValue={item?.image} placeholder="https://..."/></label></>}
+    <label className="wide">{isPlant ? "Mô tả cây" : "Nội dung bài viết"}<textarea name="description" rows={6} defaultValue={item?.description} placeholder={isPlant ? "Nêu dáng cây, chiều cao, đặc điểm nổi bật..." : "Viết nội dung chia sẻ, thông tin hoặc câu chuyện từ nhà vườn..."}/></label><label className="toggle-field wide"><input type="checkbox" name="published" defaultChecked={item?.published===1}/><span>{isPlant ? "Xuất bản công khai" : "Đăng bài viết công khai"}</span></label>
+  </div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":isPlant?"Lưu cây quất":"Đăng bài viết"}</button></div></form>;
 }
+
 function ContactForm({contact,onComplete}:{contact:Contact;onComplete:(notice:NonNullable<Notice>)=>void}) {
   const [pending,startTransition]=useTransition(); const [error,setError]=useState("");
   function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();const data=new FormData(event.currentTarget);setError("");startTransition(async()=>{try{await saveSettings(data);onComplete({text:"Đã lưu thông tin liên hệ thành công.",error:false})}catch{setError("Không thể lưu thông tin liên hệ. Vui lòng thử lại.")}})}
