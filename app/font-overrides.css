@@ -44,10 +44,10 @@ h3 {
 @media (max-width: 700px) { .admin-gallery-sort { grid-template-columns: repeat(3, minmax(0, 1fr)); } .gallery-url-row { flex-direction: column; } }
 
 .plant-gallery { margin: 28px 0; max-width: 900px; }
-.plant-gallery-main { background: #e5eadf; overflow: hidden; position: relative; }
-.plant-gallery-main > img { display: block; max-height: 650px; object-fit: contain; user-select: none; width: 100%; }
+.plant-gallery-main { aspect-ratio: 4 / 3; background: #e5eadf; overflow: hidden; position: relative; }
+.plant-gallery-main > img { display: block; height: 100%; inset: 0; object-fit: contain; position: absolute; user-select: none; width: 100%; }
 .plant-gallery-zoom { align-items: center; background: #173e31e8; border: 0; bottom: 14px; color: #fff; cursor: zoom-in; display: inline-flex; font: 700 13px var(--font-be-vietnam); gap: 6px; padding: 9px 12px; position: absolute; right: 14px; }
-.plant-gallery-lens { background-color: #fff; background-repeat: no-repeat; background-size: 260%; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 3px 16px #0b281b66; height: 180px; left: 50%; opacity: 0; pointer-events: none; position: absolute; top: 50%; transform: translate(-50%, -50%); transition: opacity .12s ease; width: 180px; }
+.plant-gallery-lens { background-color: #fff; background-repeat: no-repeat; border: 3px solid #fff; border-radius: 50%; box-shadow: 0 3px 16px #0b281b66; height: 240px; left: 50%; opacity: 0; pointer-events: none; position: absolute; top: 50%; transform: translate(-50%, -50%); transition: opacity .12s ease; width: 240px; }
 .plant-gallery-lens.visible { opacity: 1; }
 .plant-gallery-thumbnails { display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 4px; }
 .plant-gallery-thumbnails button { background: transparent; border: 2px solid transparent; cursor: pointer; flex: 0 0 84px; padding: 0; }
@@ -57,4 +57,4 @@ h3 {
 .plant-gallery-lightbox img { max-height: 92vh; max-width: 94vw; object-fit: contain; }
 .plant-gallery-lightbox button { background: #fff; border: 0; border-radius: 50%; color: #173e31; cursor: pointer; font-size: 30px; height: 42px; line-height: 35px; position: absolute; right: 20px; top: 20px; width: 42px; }
 @media (pointer: fine) { .plant-gallery-main { cursor: crosshair; } .plant-gallery-main:has(.plant-gallery-zoom:hover) { cursor: default; } }
-@media (max-width: 700px) { .plant-gallery-main { touch-action: auto; } .plant-gallery-main > img { max-height: 460px; } .plant-gallery-lens { display: none; } .plant-gallery-zoom span { display: none; } .plant-gallery-zoom { font-size: 22px; padding: 7px 10px; } }
+@media (max-width: 700px) { .plant-gallery-main { touch-action: auto; } .plant-gallery-lens { display: none; } .plant-gallery-zoom span { display: none; } .plant-gallery-zoom { font-size: 22px; padding: 7px 10px; } }
