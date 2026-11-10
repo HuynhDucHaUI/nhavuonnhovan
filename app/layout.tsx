@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   description: DEFAULT_DESCRIPTION,
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "vi_VN", url: SITE_URL, siteName: SITE_NAME, title: "Nhà vườn Nho Văn | Quất cảnh & bán sỉ toàn quốc", description: DEFAULT_DESCRIPTION },
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png", sizes: "1024x1024" }],
+    shortcut: ["/icon.png"],
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "1024x1024" }],
+  },
   robots: { index: true, follow: true },
 };
 
