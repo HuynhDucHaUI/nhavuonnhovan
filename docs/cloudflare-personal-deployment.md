@@ -22,7 +22,7 @@ Không đưa ba giá trị này vào mã nguồn, `.env`, ảnh chụp màn hìn
 
 1. Đăng nhập Wrangler bằng Cloudflare OAuth rồi tạo Worker, D1 và R2.
 2. Áp các migration trong `drizzle/` với `npm run cloudflare:migrate`.
-3. Sao chép dữ liệu và ảnh từ hệ thống hiện tại, rồi kiểm tra URL `workers.dev`.
+3. Sao chép dữ liệu và ảnh từ hệ thống hiện tại, rồi kiểm tra URL `workers.dev`. Script `cloudflare:import` nhận một bản export JSON cục bộ đã được bỏ qua bởi Git; `cloudflare:copy-images` sao chép các ảnh được tham chiếu sang R2. Tuyệt đối không commit dữ liệu hoặc hash mật khẩu.
 4. Tạo GitHub secrets bên trên và chạy workflow **Deploy personal Cloudflare Worker** thủ công một lần.
 5. Chỉ sau khi xác nhận quản trị, ảnh và nội dung chạy đúng trên preview mới chuyển nameserver/domain sang Cloudflare.
 

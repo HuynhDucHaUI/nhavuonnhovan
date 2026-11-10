@@ -13,6 +13,8 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "cloudflare:migrate": "node scripts/apply-d1-migrations.mjs",
+    "cloudflare:import": "node scripts/import-d1-export.mjs",
+    "cloudflare:copy-images": "node scripts/copy-r2-images.mjs",
     "cloudflare:deploy": "npm run build && npx wrangler deploy --config dist/server/wrangler.json"
   },
   "dependencies": {
