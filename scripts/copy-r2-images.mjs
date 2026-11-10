@@ -51,6 +51,7 @@ function collectImageKeys() {
 function upload(key, filePath, contentType) {
   const result = spawnSync(process.execPath, [
     wrangler, "r2", "object", "put", `${bucketName}/${key}`,
+    "--remote",
     "--file", filePath,
     "--content-type", contentType,
     "--cache-control", "public, max-age=31536000, immutable",
