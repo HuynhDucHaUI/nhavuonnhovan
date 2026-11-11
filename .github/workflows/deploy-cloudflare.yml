@@ -14,8 +14,6 @@ permissions:
 
 jobs:
   deploy:
-    # The first push is safely skipped until the account-specific secrets exist.
-    if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' && secrets.CLOUDFLARE_D1_DATABASE_ID != '' }}
     runs-on: ubuntu-latest
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
