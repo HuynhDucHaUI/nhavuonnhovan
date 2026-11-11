@@ -5,7 +5,7 @@ const publicCollectionStyles = `
 `;
 
 export function SiteHeader() {
-  return <><style>{publicCollectionStyles}</style><header><a className="brand" href="/"><span className="brand-icon">✳</span><span>NHÀ VƯỜN <b>NHO VĂN</b></span></a><nav><a href="/cay-quat">Cây quất</a><a href="/lo-si">Bán sỉ theo lô</a><a href="/#cauchuyen">Nhà vườn</a><a href="/bai-viet">Bài viết</a><a className="nav-cta" href="/#lienhe">Ghé thăm vườn ↗</a></nav></header></>;
+  return <><style>{publicCollectionStyles}</style><header className="site-header"><a className="brand" href="/"><span className="brand-icon" aria-hidden="true">✳</span><span>NHÀ VƯỜN <b>NHO VĂN</b></span></a><nav className="site-nav" aria-label="Điều hướng chính"><a href="/cay-quat">Cây quất</a><a href="/lo-si">Bán sỉ theo lô</a><a href="/#cauchuyen">Nhà vườn</a><a href="/bai-viet">Bài viết</a><a className="nav-cta" href="/#lienhe">Ghé thăm vườn ↗</a></nav><details className="mobile-navigation"><summary aria-label="Mở menu điều hướng"><span className="mobile-menu-icon" aria-hidden="true">☰</span><span>Menu</span></summary><nav className="mobile-navigation-panel" aria-label="Điều hướng trên điện thoại"><a href="/cay-quat">Cây quất</a><a href="/lo-si">Bán sỉ theo lô</a><a href="/#cauchuyen">Nhà vườn</a><a href="/bai-viet">Bài viết</a><a className="nav-cta" href="/#lienhe">Ghé thăm vườn ↗</a></nav></details></header></>;
 }
 
 export async function SiteFooter() {
