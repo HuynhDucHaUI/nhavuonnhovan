@@ -22,6 +22,7 @@ jobs:
       CLOUDFLARE_D1_DATABASE_NAME: nhavuonnhovan-production
       CLOUDFLARE_R2_BUCKET_NAME: nhavuonnhovan-images
       CLOUDFLARE_WORKER_NAME: nhavuonnhovan
+      CLOUDFLARE_ZONE_NAME: nhavuonnhovan.io.vn
 
     steps:
       - name: Check out source
@@ -44,3 +45,6 @@ jobs:
 
       - name: Deploy Worker
         run: npx wrangler deploy --config dist/server/wrangler.json --route "nhavuonnhovan.io.vn/*"
+
+      - name: Ensure production Worker route
+        run: node scripts/ensure-worker-route.mjs
