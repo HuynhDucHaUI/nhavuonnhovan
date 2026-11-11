@@ -44,7 +44,7 @@ jobs:
         run: node scripts/apply-d1-migrations.mjs
 
       - name: Deploy Worker
-        run: npx wrangler deploy --config dist/server/wrangler.json --route "nhavuonnhovan.io.vn/*"
+        run: npx wrangler deploy --config dist/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME" --route "nhavuonnhovan.io.vn/*"
 
       - name: Ensure production Worker route
         run: node scripts/ensure-worker-route.mjs
