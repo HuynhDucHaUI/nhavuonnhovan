@@ -31,12 +31,11 @@ if (!zone) throw new Error(`Active zone not found for ${zoneName}.`);
 const pattern = `${zoneName}/*`;
 const routes = await cloudflare(`/zones/${zone.id}/workers/routes`);
 const existingRoute = routes.find((route) => route.pattern === pattern);
-const route = { pattern, script: workerName };
-
-if (existingRoute) {
-  await cloudflare(`/zones/${zone.id}/workers/routes/${existingRoute.id}`, { method: "PUT", body: JSON.stringify(route) });
+if (existingRoute?.script === workerName) {
+  await cloudflare(`/zones/${zone.id}/workers/routes/${existingRoute.id}`, { method: "DELETE" });
+  console.log(`Superseded Worker route removed for ${pattern}.`);
+} else if (existingRoute) {
+  throw new Error(`Route ${pattern} belongs to another Worker and was not changed.`);
 } else {
-  await cloudflare(`/zones/${zone.id}/workers/routes`, { method: "POST", body: JSON.stringify(route) });
+  console.log(`No superseded Worker route exists for ${pattern}.`);
 }
-
-console.log(`Production Worker route ensured for ${pattern}.`);

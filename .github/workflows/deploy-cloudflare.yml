@@ -43,10 +43,16 @@ jobs:
       - name: Apply D1 migrations
         run: node scripts/apply-d1-migrations.mjs
 
-      - name: Deploy Worker
+      - name: Upload Worker version
+        run: npx wrangler deploy --config dist/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
+
+      - name: Remove legacy managed-hosting origin records
+        run: node scripts/remove-legacy-apex-origin.mjs
+
+      - name: Connect Worker custom domain
         run: npx wrangler deploy --config dist/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME" --domain "$CLOUDFLARE_ZONE_NAME"
 
-      - name: Ensure production Worker route
+      - name: Remove superseded Worker route
         run: node scripts/ensure-worker-route.mjs
 
       - name: Verify public production deployment
