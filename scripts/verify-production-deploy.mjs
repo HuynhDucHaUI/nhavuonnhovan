@@ -5,11 +5,12 @@ if (!zoneName) {
 }
 
 const productionUrl = `https://${zoneName}/`;
+const verificationUrl = `${productionUrl}?__deploy_check=${Date.now()}`;
 const expectedMarkers = ["mobile-navigation", "scroll-to-top"];
-const maxAttempts = 12;
+const maxAttempts = 24;
 
 for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-  const response = await fetch(productionUrl, {
+  const response = await fetch(verificationUrl, {
     headers: { "Cache-Control": "no-cache" },
   });
   const html = await response.text();
