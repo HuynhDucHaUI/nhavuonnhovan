@@ -46,6 +46,9 @@ jobs:
       - name: Upload Worker version
         run: npx wrangler deploy --config dist/server/wrangler.json --name "$CLOUDFLARE_WORKER_NAME"
 
+      - name: Ensure admin session secret exists
+        run: node scripts/ensure-auth-secret.mjs
+
       - name: Remove legacy managed-hosting origin records
         run: node scripts/remove-legacy-apex-origin.mjs
 
