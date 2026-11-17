@@ -18,13 +18,14 @@ function galleryUrls(value: string) {
     return [];
   }
 }
+function optionalNumber(f:FormData,key:string) { const value=val(f,key,20); if (!value) return null; const number=Number(value); if (!Number.isSafeInteger(number) || number < 0) throw new Error("Giá trị số không hợp lệ."); return number; }
 export async function saveEntry(f:FormData){
  await authorize(); const title=val(f,"title",150);if(!title)throw new Error("Cần nhập tiêu đề.");
  const kind=val(f,"kind")==="article"?"article":"plant";const status=val(f,"status");
  const requestedImage=imageUrl(val(f,"image",2048));
  const gallery=kind === "plant" ? galleryUrls(val(f,"gallery",30000)) : [];
  if (kind === "plant" && requestedImage && !gallery.includes(requestedImage)) gallery.unshift(requestedImage);
- const item={title,kind,code:val(f,"code",80),description:val(f,"description",12000),image:kind === "plant" ? (gallery[0] || requestedImage) : requestedImage,gallery:JSON.stringify(gallery),price:val(f,"price",100),status:["available","sold","contact"].includes(status)?status:"contact",published:f.get("published")?1:0};
+ const item={title,kind,code:val(f,"code",80),description:val(f,"description",12000),image:kind === "plant" ? (gallery[0] || requestedImage) : requestedImage,gallery:JSON.stringify(gallery),price:val(f,"price",100),plantShape:kind === "plant" ? val(f,"plant_shape",100) : "",heightCm:kind === "plant" ? optionalNumber(f,"height_cm") : null,priceVnd:kind === "plant" ? optionalNumber(f,"price_vnd") : null,status:["available","sold","contact"].includes(status)?status:"contact",published:f.get("published")?1:0};
  const operation = val(f,"operation",20);
  const id=Number(f.get("id"));
  const db=getDb();

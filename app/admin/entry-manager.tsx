@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { BookOpen, ChevronLeft, ChevronRight, CircleHelp, FilePenLine, Home, Image, LogOut, Menu, MoreVertical, Pencil, Plus, Search, Settings, Trash2, Trees, Upload, Users, X } from "lucide-react";
 import { deleteEntry, logoutAction, saveEntry, saveSettings } from "./actions";
 import { PlantGalleryInput, type PlantGalleryItem } from "./plant-gallery-input";
@@ -56,10 +57,10 @@ export function EntryManager({ items, contact, user }: { items: Item[]; contact:
         <button className={screen === "content" && kind === "all" ? "active" : ""} onClick={() => navigate("content", "all")}><FilePenLine size={18}/>Quản lý nội dung</button>
         <button className={screen === "content" && kind === "plant" ? "active" : ""} onClick={() => navigate("content", "plant")}><Trees size={18}/>Cây quất</button>
         <button className={screen === "content" && kind === "article" ? "active" : ""} onClick={() => navigate("content", "article")}><BookOpen size={18}/>Bài viết</button>
-        <a href="/admin/lots"><Trees size={18}/>Lô/luống & tồn kho</a>
+        <Link href="/admin/lots"><Trees size={18}/>Lô/luống & tồn kho</Link>
         {user.role === "owner" && <a href="/admin/users"><Users size={18}/>Quản lý tài khoản</a>}
         <button onClick={() => {setModal("contact");setSidebarOpen(false)}}><Users size={18}/>Thông tin liên hệ</button>
-        <a href="/"><Image size={18}/>Xem website</a>
+        <Link href="/"><Image size={18}/>Xem website</Link>
         <button onClick={() => {setModal("help");setSidebarOpen(false)}}><CircleHelp size={18}/>Hỗ trợ</button>
       </nav>
       <div className="sidebar-bottom"><form action={logoutAction}><button type="submit"><LogOut size={18}/>Đăng xuất</button></form></div>
@@ -68,7 +69,7 @@ export function EntryManager({ items, contact, user }: { items: Item[]; contact:
       <header className="admin-topbar">
         <button className="menu-button" onClick={() => setSidebarOpen(true)} aria-label="Mở menu"><Menu size={21}/></button>
         <p>Trang chủ <span>›</span> <b>{screen === "overview" ? "Tổng quan" : "Quản lý nội dung"}</b></p>
-        <div className="topbar-actions"><a href="/"><Home size={18}/><span>Website</span></a><form action={logoutAction}><button type="submit" className="logout-link"><LogOut size={18}/><span>Đăng xuất</span></button></form></div>
+        <div className="topbar-actions"><Link href="/"><Home size={18}/><span>Website</span></Link><form action={logoutAction}><button type="submit" className="logout-link"><LogOut size={18}/><span>Đăng xuất</span></button></form></div>
       </header>
       <main className="admin-content" id="quan-ly-noi-dung">
         {screen === "overview" ? <Overview items={items} onOpenContent={() => navigate("content", "all")} onCreate={() => open("create")} onContact={() => setModal("contact")}/> : <>
@@ -175,7 +176,7 @@ function EntryForm({item,onComplete}:{item?:Item;onComplete:(notice:NonNullable<
     <label>Loại nội dung<select name="kind" value={kind} onChange={(event)=>setKind(event.target.value === "article" ? "article" : "plant")}><option value="plant">Cây quất — nội dung bán cây</option><option value="article">Bài viết — giới thiệu, chia sẻ</option></select><small>{isPlant ? "Hiển thị tại mục Cây quất trên website." : "Hiển thị tại mục Chuyện từ nhà vườn trên website."}</small></label>
     {isPlant && <label>Trạng thái cây<select name="status" defaultValue={item?.status||"contact"}><option value="contact">Liên hệ</option><option value="available">Còn tại vườn</option><option value="sold">Đã bán</option></select></label>}
     <label className="wide">{isPlant ? "Tên cây" : "Tiêu đề bài viết"}<input name="title" required maxLength={150} defaultValue={item?.title} placeholder={isPlant ? "Ví dụ: Quất chum thế đẹp" : "Ví dụ: Cách chọn quất đẹp ngày Tết"}/></label>
-    {isPlant && <><label>Mã cây<input name="code" defaultValue={item?.code} placeholder="Ví dụ: Q-2026-01"/></label><label>Giá hoặc thông tin giá<input name="price" defaultValue={item?.price} placeholder="Ví dụ: Liên hệ để biết giá"/></label><PlantGalleryInput image={item?.image || ""} gallery={item?.gallery || "[]"} onChange={setGallery}/></>}
+    {isPlant && <><label>Mã cây<input name="code" defaultValue={item?.code} placeholder="Ví dụ: Q-2026-01"/></label><label>Giá hoặc thông tin giá<input name="price" defaultValue={item?.price} placeholder="Ví dụ: Liên hệ để biết giá"/></label><label>Dáng cây<input name="plant_shape" maxLength={100} defaultValue={item?.plantShape || ""} placeholder="Ví dụ: Quất chum" /></label><label>Chiều cao (cm)<input name="height_cm" type="number" min="0" step="1" defaultValue={item?.heightCm ?? ""} /></label><label>Giá tham khảo (VNĐ)<input name="price_vnd" type="number" min="0" step="1" defaultValue={item?.priceVnd ?? ""} /><small>Dùng để lọc giá; để trống nếu liên hệ báo giá.</small></label><PlantGalleryInput image={item?.image || ""} gallery={item?.gallery || "[]"} onChange={setGallery}/></>}
     {!isPlant && <><label className="wide upload-field">Ảnh bìa bài viết<input type="file" name="photo" accept="image/jpeg,image/png,image/webp"/><span><Upload size={16}/> JPEG, PNG hoặc WebP, tối đa 5 MB</span></label><label className="wide">Hoặc dùng liên kết ảnh HTTPS<input type="text" name="image" defaultValue={item?.image} placeholder="https://..."/></label></>}
     <label className="wide">{isPlant ? "Mô tả cây" : "Nội dung bài viết"}<textarea name="description" rows={6} defaultValue={item?.description} placeholder={isPlant ? "Nêu dáng cây, chiều cao, đặc điểm nổi bật..." : "Viết nội dung chia sẻ, thông tin hoặc câu chuyện từ nhà vườn..."}/></label><label className="toggle-field wide"><input type="checkbox" name="published" defaultChecked={item?.published===1}/><span>{isPlant ? "Xuất bản công khai" : "Đăng bài viết công khai"}</span></label>
   </div>{error&&<p className="inline-error">{error}</p>}<div className="modal-footer"><button className="primary-button" type="submit" disabled={pending}>{pending?"Đang lưu…":isPlant?"Lưu cây quất":"Đăng bài viết"}</button></div></form>;

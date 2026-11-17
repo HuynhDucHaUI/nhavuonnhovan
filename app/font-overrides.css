@@ -41,6 +41,14 @@ h3 {
 .admin-gallery-item img { aspect-ratio: 1; display: block; object-fit: cover; width: 100%; }
 .admin-gallery-item span { color: #315e7b; display: block; font-size: 11px; font-weight: 700; padding: 6px 26px 6px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .admin-gallery-item button { position: absolute; right: 5px; bottom: 4px; border: 0; border-radius: 50%; width: 21px; height: 21px; line-height: 17px; background: #e54b4b; color: #fff; cursor: pointer; font-size: 18px; }
+.gallery-item-controls { display: flex; gap: 4px; padding: 4px 7px 7px; }
+.admin-gallery-item .gallery-item-controls button { position: static; border-radius: 4px; width: 30px; height: 30px; background: #315e7b; }
+.admin-gallery-item .gallery-item-controls button:last-child { background: #c73939; }
+.admin-gallery-item .gallery-item-controls button:disabled { opacity: .35; cursor: default; }
+.listing-page .lot-filters { flex-wrap: wrap; margin-top: 16px; }
+.listing-page .lot-filters label { flex: 1 1 180px; }
+.listing-page .lot-filters input, .listing-page .lot-filters select { min-width: 0; width: 100%; padding: 10px; border: 1px solid #cbd7c6; background: #fff; color: #294739; box-sizing: border-box; }
+.detail textarea[aria-label] { width: 100%; max-width: 600px; margin-top: 10px; padding: 10px; }
 @media (max-width: 700px) { .admin-gallery-sort { grid-template-columns: repeat(3, minmax(0, 1fr)); } .gallery-url-row { flex-direction: column; } }
 
 .plant-gallery { margin: 28px 0; max-width: 900px; }

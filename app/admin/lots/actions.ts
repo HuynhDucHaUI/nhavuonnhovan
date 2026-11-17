@@ -33,17 +33,11 @@ function imageUrl(value: string) {
   if (/^\/api\/images\/[0-9a-f-]{36}$/.test(value)) return value;
   try { const parsed = new URL(value); return parsed.protocol === "https:" ? parsed.toString() : ""; } catch { return ""; }
 }
-async function uploadImage(formData: FormData) {
-  const manualImage = imageUrl(text(formData, "image", 2048));
-  if (manualImage) return manualImage;
-  const file = formData.get("photo");
-  if (!(file instanceof File) || !file.size) return manualImage;
-  if (file.size > 5 * 1024 * 1024) throw new Error("Ảnh phải nhỏ hơn hoặc bằng 5 MB.");
-  if (!(["image/jpeg", "image/png", "image/webp"] as string[]).includes(file.type)) throw new Error("Chỉ hỗ trợ ảnh JPEG, PNG hoặc WebP.");
-  if (!env.BUCKET) throw new Error("Kho ảnh chưa sẵn sàng.");
-  const key = crypto.randomUUID();
-  await env.BUCKET.put(key, await file.arrayBuffer(), { httpMetadata: { contentType: file.type, cacheControl: "public, max-age=31536000, immutable" } });
-  return `/api/images/${key}`;
+function galleryValues(formData: FormData) {
+  let raw: unknown;
+  try { raw = JSON.parse(text(formData, "gallery", 30000) || "[]"); } catch { throw new Error("Danh sách ảnh không hợp lệ."); }
+  if (!Array.isArray(raw) || raw.length > 10 || raw.some((item) => typeof item !== "string" || !imageUrl(item))) throw new Error("Danh sách ảnh không hợp lệ.");
+  return [...new Set(raw.map((item: string) => imageUrl(item)))];
 }
 async function lotValues(formData: FormData) {
   const code = text(formData, "code", 40).toUpperCase();
@@ -51,6 +45,9 @@ async function lotValues(formData: FormData) {
   const plantType = text(formData, "plant_type", 100);
   if (!codePattern.test(code)) throw new Error("Mã lô gồm 3–40 ký tự: chữ in hoa, số, gạch ngang hoặc gạch dưới.");
   if (!title || !plantType) throw new Error("Cần nhập tên lô và loại/dáng cây.");
+  const gallery = galleryValues(formData);
+  const photoDate = text(formData, "photo_date", 10);
+  if (photoDate && !/^\d{4}-\d{2}-\d{2}$/.test(photoDate)) throw new Error("Ngày chụp không hợp lệ.");
   return {
     code, title, plantType,
     sizeOrAge: text(formData, "size_or_age", 120),
@@ -58,7 +55,7 @@ async function lotValues(formData: FormData) {
     minimumOrderQuantity: positiveInteger(formData.get("minimum_order_quantity"), "Mức mua tối thiểu"),
     unit: text(formData, "unit", 20) || "cây",
     wholesalePrice: text(formData, "wholesale_price", 100),
-    image: await uploadImage(formData),
+    image: gallery[0] || "", gallery: JSON.stringify(gallery), photoDate,
     description: text(formData, "description", 4000),
     published: formData.get("published") ? 1 : 0,
   };
@@ -73,11 +70,12 @@ function revalidateLot(id?: number) {
 export async function createLotAction(formData: FormData) {
   const actor = await requireAdmin(`${lotPath}/new`);
   try {
+    if (!env.DB) throw new Error("Cơ sở dữ liệu chưa sẵn sàng.");
     const values = await lotValues(formData);
     const quantity = positiveInteger(formData.get("initial_quantity"), "Số lượng ban đầu");
     const now = new Date().toISOString();
     const result = await env.DB.batch([
-      env.DB.prepare(`INSERT INTO inventory_lots (code,title,plant_type,size_or_age,location,initial_quantity,quantity_remaining,minimum_order_quantity,unit,wholesale_price,image,description,status,published,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(values.code, values.title, values.plantType, values.sizeOrAge, values.location, quantity, quantity, values.minimumOrderQuantity, values.unit, values.wholesalePrice, values.image, values.description, "available", values.published, now, now),
+      env.DB.prepare(`INSERT INTO inventory_lots (code,title,plant_type,size_or_age,location,initial_quantity,quantity_remaining,minimum_order_quantity,unit,wholesale_price,image,gallery,photo_date,description,status,published,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(values.code, values.title, values.plantType, values.sizeOrAge, values.location, quantity, quantity, values.minimumOrderQuantity, values.unit, values.wholesalePrice, values.image, values.gallery, values.photoDate, values.description, "available", values.published, now, now),
       env.DB.prepare(`INSERT INTO inventory_movements (lot_id,type,quantity,note,actor_user_id,created_at) SELECT id,'in',?,?,?,? FROM inventory_lots WHERE code=? AND created_at=?`).bind(quantity, "Tạo lô mới", actor.id, now, values.code, now),
     ]);
     if (result[0].meta.changes !== 1 || result[1].meta.changes !== 1) throw new Error("Không thể tạo lô.");
@@ -107,6 +105,7 @@ export async function recordMovementAction(formData: FormData) {
   const actor = await requireAdmin();
   const lotId = id(formData.get("lot_id"));
   try {
+    if (!env.DB) throw new Error("Cơ sở dữ liệu chưa sẵn sàng.");
     const type = text(formData, "type", 20);
     const rawQuantity = type === "adjust" ? signedInteger(formData.get("quantity"), "Số điều chỉnh") : positiveInteger(formData.get("quantity"), "Số lượng");
     if (!(["in", "sale", "adjust"] as string[]).includes(type)) throw new Error("Loại giao dịch không hợp lệ.");

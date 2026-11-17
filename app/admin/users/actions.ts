@@ -92,7 +92,8 @@ export async function changeMyPasswordAction(formData: FormData) {
   const currentPassword = String(formData.get("current_password") || "");
   const newPassword = String(formData.get("new_password") || "");
   if (!validatePassword(newPassword)) failure("Mật khẩu mới cần từ 10 đến 128 ký tự.");
-  if (!await verifyPassword(currentPassword, actor.passwordSalt, actor.passwordHash)) failure("Mật khẩu hiện tại không chính xác.");
+  const credentials = await getDb().select({ passwordSalt: adminUsers.passwordSalt, passwordHash: adminUsers.passwordHash }).from(adminUsers).where(eq(adminUsers.id, actor.id)).limit(1).then(rows => rows[0]);
+  if (!credentials || !await verifyPassword(currentPassword, credentials.passwordSalt, credentials.passwordHash)) failure("Mật khẩu hiện tại không chính xác.");
   await getDb().update(adminUsers).set({ ...await makePassword(newPassword), updatedAt: new Date().toISOString() }).where(eq(adminUsers.id, actor.id));
   await revokeUserSessions(actor.id);
   revalidatePath("/admin/users");

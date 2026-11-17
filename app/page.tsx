@@ -235,7 +235,7 @@ export function PlantCard({ item }: { item: PublicItem }) {
               : "LIÊN HỆ"}
         </p>
         <h3>{item.title}</h3>
-        <p>{item.price || "Liên hệ để biết giá"}</p>
+        <p>{item.price || (item.priceVnd != null ? `Giá tham khảo: ${item.priceVnd.toLocaleString("vi-VN")} ₫` : "Liên hệ để biết giá")}</p>
       </div>
     </a>
   );

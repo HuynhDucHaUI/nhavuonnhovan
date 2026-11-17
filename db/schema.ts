@@ -7,6 +7,9 @@ export const entries = sqliteTable("entries", {
   /** JSON array of up to ten photos. Used only by public plant listings. */
   gallery: text("gallery").notNull().default("[]"),
   price: text("price").notNull().default(""),
+  plantShape: text("plant_shape").notNull().default(""),
+  heightCm: integer("height_cm"),
+  priceVnd: integer("price_vnd"),
   status: text("status").notNull().default("contact"), published: integer("published").notNull().default(0),
   createdAt: text("created_at").notNull()
 }, (table) => [index("entries_public_feed_idx").on(table.published, table.kind, table.id)]);
@@ -50,6 +53,8 @@ export const inventoryLots = sqliteTable("inventory_lots", {
   unit: text("unit").notNull().default("cây"),
   wholesalePrice: text("wholesale_price").notNull().default(""),
   image: text("image").notNull().default(""),
+  gallery: text("gallery").notNull().default("[]"),
+  photoDate: text("photo_date").notNull().default(""),
   description: text("description").notNull().default(""),
   status: text("status", { enum: ["available", "sold_out"] }).notNull().default("available"),
   published: integer("published").notNull().default(0),

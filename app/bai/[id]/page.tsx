@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { SiteFooter, SiteHeader } from "@/app/components/site-chrome";
+import { ContactItem } from "@/app/components/contact-item";
 import { PlantImageGallery } from "@/app/components/plant-image-gallery";
 import { publicContact, publicEntry } from "@/app/data";
 import { descriptionFrom, publicMetadata } from "@/lib/seo";
@@ -38,8 +39,8 @@ export default async function Detail({ params }: { params: Promise<{ id: string 
     <p className="eyebrow green">{item.kind === "plant" ? "QUẤT CẢNH" : "BÀI VIẾT"}{item.code && ` · ${item.code}`}</p>
     <h1>{item.title}</h1>
     {item.kind === "plant" ? gallery.length > 0 && <PlantImageGallery images={gallery} title={item.title} /> : item.image && <img className="detail-img" src={item.image} alt={item.title} decoding="async" />}
-    {item.kind === "plant" && <p><b>{item.price || "Liên hệ để biết giá"}</b> · {item.status === "sold" ? "Đã bán" : item.status === "available" ? "Còn tại vườn" : "Vui lòng liên hệ"}</p>}
+    {item.kind === "plant" && <p><b>{item.price || (item.priceVnd != null ? `Giá tham khảo: ${item.priceVnd.toLocaleString("vi-VN")} ₫` : "Liên hệ để biết giá")}</b> · {item.status === "sold" ? "Đã bán" : item.status === "available" ? "Còn tại vườn" : "Vui lòng liên hệ"}</p>}
     <p className="description">{item.description}</p>
-    <div className="actions">{config.phone && <a className="button dark" href={`tel:${config.phone}`}>Gọi nhà vườn</a>}{config.zalo && <a className="button dark" href={config.zalo} target="_blank" rel="noreferrer">Nhắn Zalo</a>}<a className="underline" href="/#lienhe">Thông tin nhà vườn →</a></div>
+    {item.kind === "plant" ? <ContactItem title={item.title} code={item.code} path={`/bai/${item.id}`} kind="cây" phone={config.phone} zalo={config.zalo} /> : <div className="actions">{config.phone && <a className="button dark" href={`tel:${config.phone}`}>Gọi nhà vườn</a>}{config.zalo && <a className="button dark" href={config.zalo} target="_blank" rel="noreferrer">Nhắn Zalo</a>}</div>}
   </main><SiteFooter /></>;
 }
