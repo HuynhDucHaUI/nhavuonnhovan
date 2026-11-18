@@ -2,16 +2,12 @@
 
 import { redirect } from "next/navigation";
 import { attemptLogin } from "../auth";
-
-function returnPath(value: FormDataEntryValue | null) {
-  const path = typeof value === "string" ? value : "/admin";
-  return path.startsWith("/") && !path.startsWith("//") && !path.startsWith("/admin/login") ? path : "/admin";
-}
+import { adminReturnPath } from "@/lib/admin-return-path";
 
 export async function loginAction(formData: FormData) {
   const username = String(formData.get("username") || "");
   const password = String(formData.get("password") || "");
-  const destination = returnPath(formData.get("return_to"));
+  const destination = adminReturnPath(formData.get("return_to"));
   let user = null;
   try {
     user = await attemptLogin(username, password);

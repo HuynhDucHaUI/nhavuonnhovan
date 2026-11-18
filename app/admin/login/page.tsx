@@ -1,13 +1,14 @@
 import { redirect } from "next/navigation";
 import { currentAdmin } from "../auth";
 import { loginAction } from "./actions";
+import { adminReturnPath } from "@/lib/admin-return-path";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminLogin({ searchParams }: { searchParams: Promise<{ error?: string; return_to?: string }> }) {
   if (await currentAdmin()) redirect("/admin");
   const { error, return_to } = await searchParams;
-  const returnTo = return_to?.startsWith("/") && !return_to.startsWith("//") ? return_to : "/admin";
+  const returnTo = adminReturnPath(return_to);
   return <main className="local-login"><style>{styles}</style><section className="login-card">
     <p className="login-kicker">NHÀ VƯỜN NHO VĂN</p>
     <h1>Đăng nhập quản trị</h1>

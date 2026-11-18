@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { and, eq, gt } from "drizzle-orm";
+import { and, eq, gt, isNull, lte, or, sql } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
@@ -133,19 +133,24 @@ export async function authorize() { await requireAdmin(); }
 export async function attemptLogin(username: string, password: string) {
   await ensureInitialOwner();
   const normalizedUsername = username.trim().toLowerCase();
+  if (!validateUsername(normalizedUsername) || password.length > 128) return null;
   const db = getDb();
   const user = await db.select().from(adminUsers).where(eq(adminUsers.username, normalizedUsername)).limit(1).then((rows) => rows[0]);
   const time = now();
   if (!user || user.status !== "active" || (user.lockedUntil && new Date(user.lockedUntil) > time)) return null;
   const valid = await verifyPassword(password, user.passwordSalt, user.passwordHash);
   if (!valid) {
-    const failures = user.failedLoginCount + 1;
-    const lockedUntil = failures >= MAX_LOGIN_FAILURES ? new Date(Date.now() + LOCK_MINUTES * 60 * 1000).toISOString() : null;
-    await db.update(adminUsers).set({ failedLoginCount: lockedUntil ? 0 : failures, lockedUntil, updatedAt: timestamp() }).where(eq(adminUsers.id, user.id));
+    const lockedUntil = new Date(Date.now() + LOCK_MINUTES * 60 * 1000).toISOString();
+    await db.update(adminUsers).set({
+      failedLoginCount: sql`CASE WHEN ${adminUsers.failedLoginCount} + 1 >= ${MAX_LOGIN_FAILURES} THEN 0 ELSE ${adminUsers.failedLoginCount} + 1 END`,
+      lockedUntil: sql`CASE WHEN ${adminUsers.failedLoginCount} + 1 >= ${MAX_LOGIN_FAILURES} THEN ${lockedUntil} ELSE NULL END`,
+      updatedAt: timestamp(),
+    }).where(and(eq(adminUsers.id, user.id), eq(adminUsers.status, "active"), or(isNull(adminUsers.lockedUntil), lte(adminUsers.lockedUntil, timestamp()))));
     return null;
   }
   const updatedAt = timestamp();
-  await db.update(adminUsers).set({ failedLoginCount: 0, lockedUntil: null, lastLoginAt: updatedAt, updatedAt }).where(eq(adminUsers.id, user.id));
+  const updated = await db.update(adminUsers).set({ failedLoginCount: 0, lockedUntil: null, lastLoginAt: updatedAt, updatedAt }).where(and(eq(adminUsers.id, user.id), eq(adminUsers.status, "active"), eq(adminUsers.passwordHash, user.passwordHash), or(isNull(adminUsers.lockedUntil), lte(adminUsers.lockedUntil, updatedAt)))).returning({ id: adminUsers.id });
+  if (!updated.length) return null;
   await createSession(user.id);
   return user;
 }
