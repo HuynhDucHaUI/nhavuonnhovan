@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
   openGraph: { type: "website", locale: "vi_VN", url: SITE_URL, siteName: SITE_NAME, title: "Nhà vườn Nho Văn | Quất cảnh & bán sỉ toàn quốc", description: DEFAULT_DESCRIPTION },
   icons: {
-    icon: [{ url: "/icon.png", type: "image/png", sizes: "1024x1024" }],
-    shortcut: ["/icon.png"],
+    icon: [{ url: "/icon.png", type: "image/png", sizes: "192x192" }],
+    shortcut: ["/favicon.ico"],
     apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "1024x1024" }],
   },
   robots: { index: true, follow: true },

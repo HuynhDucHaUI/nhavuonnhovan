@@ -13,6 +13,10 @@ export default async function Home() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME,
+        alternateName: "nhavuonnhovan", url: `${SITE_URL}/`,
+      }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org", "@type": "LocalBusiness", name: SITE_NAME,
         url: SITE_URL, description: "Nhà vườn quất cảnh Nho Văn, nhận bán sỉ quất cảnh trên toàn quốc.",
         telephone: config.phone, address: { "@type": "PostalAddress", streetAddress: "Thôn CD Quán Trạch, Xã Văn Giang", addressRegion: "Hưng Yên", addressCountry: "VN" },
@@ -64,6 +68,7 @@ export default async function Home() {
             <p>
               Hãy ghé thăm vườn để tận mắt ngắm cây và trò chuyện cùng nhà vườn.
             </p>
+            <p>Website chính thức: <a href={SITE_URL}>nhavuonnhovan.io.vn</a>.</p>
             <a className="underline" href="#lienhe">
               Tìm đường đến vườn ↗
             </a>
