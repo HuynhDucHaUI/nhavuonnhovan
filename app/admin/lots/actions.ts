@@ -1,11 +1,11 @@
 "use server";
 
 import { env } from "cloudflare:workers";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { getDb } from "@/db";
-import { inventoryLots, inventoryMovements } from "@/db/schema";
+import { inventoryLots } from "@/db/schema";
 import { requireAdmin, requireOwner } from "../auth";
 import { PUBLIC_LOT_TAG } from "@/app/data";
 
@@ -127,12 +127,16 @@ export async function deleteLotAction(formData: FormData) {
   await requireOwner(lotPath);
   const lotId = id(formData.get("lot_id"));
   try {
-    const movement = await getDb().select({ id: inventoryMovements.id, note: inventoryMovements.note }).from(inventoryMovements).where(eq(inventoryMovements.lotId, lotId));
-    if (movement.some((item) => item.note !== "Tạo lô mới")) throw new Error("Không thể xóa lô đã có lịch sử giao dịch kho.");
-    const deleted = await getDb().delete(inventoryLots).where(and(eq(inventoryLots.id, lotId))).returning({ id: inventoryLots.id });
-    if (!deleted.length) throw new Error("Lô cây không còn tồn tại.");
+    if (!env.DB) throw new Error("Cơ sở dữ liệu chưa sẵn sàng.");
+    // D1 executes the guarded deletes atomically, preventing an intervening movement.
+    const result = await env.DB.batch([
+      env.DB.prepare(`DELETE FROM inventory_movements WHERE lot_id = ? AND type = 'in' AND note = ? AND EXISTS (SELECT 1 FROM inventory_lots WHERE id = ? AND quantity_remaining = initial_quantity AND inventory_movements.quantity = initial_quantity AND inventory_movements.created_at = inventory_lots.created_at) AND (SELECT count(*) FROM inventory_movements WHERE lot_id = ?) = 1`).bind(lotId, "Tạo lô mới", lotId, lotId),
+      env.DB.prepare(`DELETE FROM inventory_lots WHERE id = ? AND quantity_remaining = initial_quantity AND NOT EXISTS (SELECT 1 FROM inventory_movements WHERE lot_id = ?)`).bind(lotId, lotId),
+    ]);
+    if (result[1].meta.changes !== 1) throw new Error("Không thể xóa lô không tồn tại hoặc đã có lịch sử giao dịch kho.");
   } catch (cause) {
-    go(`${lotPath}/${lotId}`, "error", cause instanceof Error ? cause.message : "Không thể xóa lô cây.");
+    console.error("Không thể xóa lô:", cause);
+    go(`${lotPath}/${lotId}`, "error", "Không thể xóa lô không tồn tại hoặc đã có lịch sử giao dịch kho.");
   }
   revalidateLot(lotId);
   go(lotPath, "notice", "Đã xóa lô chưa phát sinh giao dịch.");
