@@ -8,6 +8,16 @@ export const PUBLIC_LOT_TAG = "public-lots";
 export const PUBLIC_SETTINGS_TAG = "public-settings";
 export type PublicEntryKind = "plant" | "article";
 
+export async function publicHeroSlides() {
+  return unstable_cache(async () => {
+    const rows = await getDb().select({ id: entries.id, title: entries.title, image: entries.image })
+      .from(entries).where(and(eq(entries.kind, "article"), eq(entries.published, 1), eq(entries.featuredOnHome, 1), gt(entries.image, "")))
+      .orderBy(desc(entries.id));
+    const seen = new Set<string>();
+    return rows.filter((row) => { if (seen.has(row.image)) return false; seen.add(row.image); return true; }).slice(0, 5);
+  }, ["public-hero-slides"], { tags: [PUBLIC_ENTRY_TAG], revalidate: 60 })();
+}
+
 const defaultContact = {
   phone: "0389982886",
   phone2: "0929623366",

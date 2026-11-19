@@ -1,17 +1,17 @@
+import { HeroSlideshow } from "./components/hero-slideshow";
 import { SiteFooter, SiteHeader } from "./components/site-chrome";
 import { PublicImage } from "./components/public-image";
-import { latestPublicEntries, latestPublicLots, publicContact } from "./data";
+import { latestPublicEntries, latestPublicLots, publicContact, publicHeroSlides } from "./data";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 const homeLimit = 3;
 
 export default async function Home() {
-  const [config, plants, articles, lots] = await Promise.all([
+  const [config, plants, articles, lots, slides] = await Promise.all([
     publicContact(), latestPublicEntries("plant", homeLimit),
-    latestPublicEntries("article", homeLimit), latestPublicLots(homeLimit),
+    latestPublicEntries("article", homeLimit), latestPublicLots(homeLimit), publicHeroSlides(),
   ]);
-  const heroImage = plants.find((plant) => plant.image)?.image || lots.find((lot) => lot.image)?.image;
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -47,10 +47,7 @@ export default async function Home() {
               </a>
             </div>
           </div>
-          <div className="hero-visual" aria-hidden="true">
-            {heroImage ? <PublicImage className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <img className="hero-fallback" src="/icon.png" alt="" />}
-            <div className="hero-visual-label"><span>VƯỜN QUẤT NHO VĂN</span><strong>Mang mùa xanh về nhà.</strong></div>
-          </div>
+          <HeroSlideshow slides={slides} />
           <div className="hero-bottom">
             <span>NHÀ VƯỜN NHO VĂN</span>
             <span>QUẤT CẢNH VĂN GIANG — VIỆT NAM</span>

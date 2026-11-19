@@ -4,6 +4,7 @@ export const entries = sqliteTable("entries", {
   kind: text("kind").notNull(), title: text("title").notNull(),
   code: text("code").notNull().default(""), description: text("description").notNull().default(""),
   image: text("image").notNull().default(""),
+  featuredOnHome: integer("featured_on_home").notNull().default(0),
   /** JSON array of up to ten photos. Used only by public plant listings. */
   gallery: text("gallery").notNull().default("[]"),
   price: text("price").notNull().default(""),
