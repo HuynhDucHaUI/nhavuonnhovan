@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gt, gte, lte, like, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, gte, lte, or, sql } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
 import { getDb } from "@/db";
 import { entries, inventoryLots, settings } from "@/db/schema";
@@ -53,11 +53,14 @@ export async function publicEntriesPage(kind: PublicEntryKind, page: number, per
 }
 
 export type PlantFilters = { q?: string; status?: string; shape?: string; minHeight?: number; maxHeight?: number; minPrice?: number; maxPrice?: number };
+function searchPattern(value: string) {
+  return `%${value.replace(/[!%_]/g, "!$&")}%`;
+}
 export async function publicPlantsPage(page: number, perPage: number, filters: PlantFilters) {
   const safePage = Number.isSafeInteger(page) && page > 0 ? page : 1;
-  const q = (filters.q || "").trim().slice(0, 100).replace(/[%_]/g, "");
+  const q = (filters.q || "").trim().slice(0, 100);
   const where = and(eq(entries.published, 1), eq(entries.kind, "plant"),
-    ...(q ? [or(like(entries.title, `%${q}%`), like(entries.code, `%${q}%`))] : []),
+    ...(q ? [or(sql`${entries.title} LIKE ${searchPattern(q)} ESCAPE '!'`, sql`${entries.code} LIKE ${searchPattern(q)} ESCAPE '!'`)] : []),
     ...(filters.status ? [eq(entries.status, filters.status)] : []),
     ...(filters.shape ? [eq(entries.plantShape, filters.shape)] : []),
     ...(filters.minHeight !== undefined ? [gte(entries.heightCm, filters.minHeight)] : []),
@@ -92,14 +95,14 @@ export async function latestPublicLots(limit = 3) {
 export async function publicLotsPage(page: number, perPage: number, plantType?: string, query?: string) {
   const safePage = Math.max(1, page);
   const normalizedType = plantType?.trim() || "";
-  const q = (query || "").trim().slice(0, 100).replace(/[%_]/g, "");
+  const q = (query || "").trim().slice(0, 100);
   return unstable_cache(async () => {
     const where = and(
       eq(inventoryLots.published, 1),
       eq(inventoryLots.status, "available"),
       gt(inventoryLots.quantityRemaining, 0),
       ...(normalizedType ? [eq(inventoryLots.plantType, normalizedType)] : []),
-      ...(q ? [or(like(inventoryLots.title, `%${q}%`), like(inventoryLots.code, `%${q}%`))] : []),
+      ...(q ? [or(sql`${inventoryLots.title} LIKE ${searchPattern(q)} ESCAPE '!'`, sql`${inventoryLots.code} LIKE ${searchPattern(q)} ESCAPE '!'`)] : []),
     );
     const db = getDb();
     const [items, total] = await Promise.all([

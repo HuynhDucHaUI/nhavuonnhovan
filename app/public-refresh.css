@@ -1,0 +1,76 @@
+﻿/* Public website refresh. The header scopes these rules away from admin screens. */
+body:has(.site-header) { background: #fbfaf5; color: #193e2b; }
+body:has(.site-header) .site-header { height: 88px; padding: 0 max(6%, calc((100% - 1320px)/2)); background: #fffef9; border-bottom: 1px solid #e7ede3; }
+.site-header .brand { gap: 10px; color: #173d27; font-size: 10px; letter-spacing: .13em; line-height: 1.35; }
+.site-header .brand b { font-size: 16px; letter-spacing: .06em; }
+.site-header .brand-logo { width: 56px; height: 56px; object-fit: contain; }
+.site-header .site-nav { gap: clamp(18px, 2.4vw, 38px); color: #274b35; font-size: 13px; }
+.site-header .site-nav a:not(.nav-cta):hover { color: #df720b; }
+.site-header .nav-cta, .site-header .mobile-navigation-panel .nav-cta { border: 0; border-radius: 999px; background: #215e3c; color: white; padding: 14px 21px; }
+body:has(.site-header) .hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .88fr); align-items: center; gap: 5%; min-height: 620px; padding: 60px 7% 0; background: #ecf3e7; color: #173d27; overflow: hidden; }
+body:has(.site-header) .hero-inner { width: 100%; margin: 0; padding: 35px 0; }
+body:has(.site-header) .hero .eyebrow { color: #a24b00; }
+body:has(.site-header) .hero h1 { font-size: clamp(46px, 5.2vw, 78px); line-height: 1.12; letter-spacing: -.055em; }
+body:has(.site-header) h1 em, body:has(.site-header) h2 em { color: #df7615; font-style: normal; font-weight: 700; }
+body:has(.site-header) .hero-copy { max-width: 490px; color: #516d59; font-size: 16px; line-height: 1.85; }
+body:has(.site-header) .button { border: 0; border-radius: 999px; cursor: pointer; transition: background .2s, transform .2s; }
+body:has(.site-header) .button:hover { transform: translateY(-2px); }
+body:has(.site-header) .hero .button { background: #246640; color: white; }
+body:has(.site-header) .hero .text-link { color: #24583a; }
+.hero-visual { position: relative; align-self: stretch; min-height: 460px; margin-bottom: 30px; border-radius: 48% 48% 24px 24px; overflow: hidden; background: radial-gradient(circle at 50% 40%, #f8e4ae 0, #c7dfa8 57%, #92bf87 100%); display: grid; place-items: center; }
+.hero-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.hero-fallback { width: min(66%, 320px); height: auto; object-fit: contain; filter: drop-shadow(0 16px 20px #35633426); }
+body:has(.site-header) img.image-fallback { object-fit: contain; padding: 12%; background: #e7f1e3; }
+.hero-visual-label { position: absolute; left: 22px; bottom: 22px; display: grid; gap: 5px; padding: 15px 20px; border-radius: 16px; background: #fffef3ed; box-shadow: 0 8px 26px #1b482126; color: #31563b; }
+.hero-visual-label span { font-size: 10px; font-weight: 700; letter-spacing: .13em; }
+.hero-visual-label strong { font-size: 14px; }
+body:has(.site-header) .hero-bottom { grid-column: 1 / -1; margin: 0; padding: 19px 0; border-color: #b9ccb6; color: #57755c; }
+body:has(.site-header) .wrap { width: min(1200px, 86%); }
+body:has(.site-header) h2 { font-size: clamp(34px, 3.7vw, 52px); line-height: 1.2; }
+body:has(.site-header) .green { color: #46804d; }
+body:has(.site-header) .intro { padding-top: 100px; padding-bottom: 100px; }
+body:has(.site-header) .catalog { background: #f0f6ed; }
+body:has(.site-header) .wholesale-home { background: #fbfaf5; }
+body:has(.site-header) .section-copy a, body:has(.site-header) .underline { color: #21633c; border-color: #a5c4a6; }
+body:has(.site-header) .card, body:has(.site-header) .article, body:has(.site-header) .lot-card { display: block; overflow: hidden; border: 1px solid #e4ede1; border-radius: 20px; background: #fff; box-shadow: 0 8px 28px #173d2b0a; transition: transform .2s, box-shadow .2s; }
+body:has(.site-header) .card:hover, body:has(.site-header) .article:hover, body:has(.site-header) .lot-card:hover { transform: translateY(-4px); box-shadow: 0 15px 35px #173d2b18; }
+body:has(.site-header) .card-image, body:has(.site-header) .lot-card img, body:has(.site-header) .lot-image, body:has(.site-header) .article-image { height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #e7f1e3; }
+body:has(.site-header) .card h3, body:has(.site-header) .article h3, body:has(.site-header) .lot-card h3 { font-size: 21px; line-height: 1.35; }
+body:has(.site-header) .article { padding: 0; }
+body:has(.site-header) .empty { border: 1px dashed #b6cdb1; border-radius: 20px; background: #ffffff80; }
+body:has(.site-header) .visit { background: #1c5235; }
+body:has(.site-header) .visit h2 em { color: #ffd094; }
+body:has(.site-header) .visit-mark { background: #f9fcf2; border: 0; color: #27603b; }
+body:has(.site-header) .visit-mark img { object-fit: contain; }
+body:has(.site-header) .site-footer { background: #fffef9; color: #486451; padding-top: 24px; padding-bottom: 24px; }
+.footer-brand { display: flex; align-items: center; gap: 10px; line-height: 1.45; }
+.footer-brand img { object-fit: contain; }
+.footer-brand b { display: block; color: #173d27; font-size: 13px; }
+body:has(.site-header) .listing-page { padding-top: 65px; }
+body:has(.site-header) .lot-filters { padding: 22px; background: #f0f6ed; border-radius: 18px; }
+body:has(.site-header) .lot-filters input, body:has(.site-header) .lot-filters select { border: 1px solid #ccddca; border-radius: 9px; min-height: 44px; }
+body:has(.site-header) .lot-filters .button { min-height: 44px; background: #246640; }
+body:has(.site-header) .public-pagination a { border-radius: 9px; }
+body:has(.site-header) .detail-grid > div { background: #f0f6ed; border-radius: 12px; }
+body:has(.site-header) .plant-gallery-main { border-radius: 20px; }
+body:has(.site-header) :focus-visible { outline: 3px solid #d77b14; outline-offset: 3px; }
+@media (max-width: 900px) { .site-header .site-nav { gap: 14px; } body:has(.site-header) .hero { gap: 4%; } }
+@media (max-width: 700px) {
+  body:has(.site-header) .site-header { min-height: 74px; height: 74px; padding: 0 5%; }
+  .site-header .brand-logo { width: 48px; height: 48px; }
+  .site-header .mobile-navigation > summary { border-radius: 999px; border-color: #b6d0b9; color: #24583a; }
+  .site-header .mobile-navigation-panel { background: #fffef9; }
+  body:has(.site-header) .hero { display: flex; flex-direction: column; align-items: stretch; gap: 0; min-height: 0; padding: 35px 6% 0; }
+  body:has(.site-header) .hero-inner { padding: 15px 0 30px; }
+  body:has(.site-header) .hero h1 { font-size: clamp(39px, 10vw, 56px); }
+  body:has(.site-header) .hero-copy { margin: 18px 0 24px; }
+  .hero-visual { min-height: 300px; margin-bottom: 18px; border-radius: 46% 46% 20px 20px; }
+  .hero-fallback { width: 180px; }
+  body:has(.site-header) .hero-bottom { width: 100%; }
+  body:has(.site-header) .wrap { width: 88%; }
+  body:has(.site-header) .intro { padding-top: 70px; padding-bottom: 70px; }
+  body:has(.site-header) .section-head { margin-bottom: 28px; }
+  body:has(.site-header) .lot-filters { padding: 16px; }
+  body:has(.site-header) .site-footer { padding-right: 72px; }
+}
+@media (prefers-reduced-motion: reduce) { body:has(.site-header) .button, body:has(.site-header) .card, body:has(.site-header) .article, body:has(.site-header) .lot-card { transition: none; } }

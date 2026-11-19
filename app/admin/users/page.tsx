@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { desc } from "drizzle-orm";
 import { getDb } from "@/db";
 import { adminUsers } from "@/db/schema";
@@ -11,7 +12,7 @@ export default async function AdminUsers({ searchParams }: { searchParams: Promi
   const users = await getDb().select().from(adminUsers).orderBy(desc(adminUsers.id));
   const { notice, error } = await searchParams;
   return <main className="accounts-page"><style>{styles}</style>
-    <header><a href="/admin">← Quản lý nội dung</a><a href="/">Xem website</a></header>
+    <header><a href="/admin">← Quản lý nội dung</a><Link href="/">Xem website</Link></header>
     <section className="accounts-heading"><div><p>HỆ THỐNG QUẢN TRỊ</p><h1>Quản lý tài khoản</h1><span>Tạo và quản lý quyền truy cập của nhân viên nhà vườn.</span></div><b>{currentUser.displayName}</b></section>
     {notice && <p className="notice success">{notice}</p>}{error && <p className="notice error" role="alert">{error}</p>}
     <section className="accounts-grid">

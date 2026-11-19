@@ -1,4 +1,5 @@
 import { SiteFooter, SiteHeader } from "./components/site-chrome";
+import { PublicImage } from "./components/public-image";
 import { latestPublicEntries, latestPublicLots, publicContact } from "./data";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 
@@ -10,6 +11,7 @@ export default async function Home() {
     publicContact(), latestPublicEntries("plant", homeLimit),
     latestPublicEntries("article", homeLimit), latestPublicLots(homeLimit),
   ]);
+  const heroImage = plants.find((plant) => plant.image)?.image || lots.find((lot) => lot.image)?.image;
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -44,6 +46,10 @@ export default async function Home() {
                 Thông tin nhà vườn ↓
               </a>
             </div>
+          </div>
+          <div className="hero-visual" aria-hidden="true">
+            {heroImage ? <PublicImage className="hero-photo" src={heroImage} alt="" fetchPriority="high" /> : <img className="hero-fallback" src="/icon.png" alt="" />}
+            <div className="hero-visual-label"><span>VƯỜN QUẤT NHO VĂN</span><strong>Mang mùa xanh về nhà.</strong></div>
           </div>
           <div className="hero-bottom">
             <span>NHÀ VƯỜN NHO VĂN</span>
@@ -203,8 +209,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="visit-mark">
-              ✳
-              <small>
+              <img src="/icon.png" alt="" width="142" height="142" /><small>
                 NHO VĂN
                 <br />
                 VĂN GIANG
@@ -225,7 +230,7 @@ export function PlantCard({ item }: { item: PublicItem }) {
     <a href={"/bai/" + item.id} className="card">
       <div className="card-image">
         {item.image ? (
-          <img src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
+          <PublicImage src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
         ) : (
           <span>✳</span>
         )}
@@ -249,7 +254,7 @@ export function ArticleCard({ item }: { item: PublicItem }) {
   return (
     <a className="article" href={"/bai/" + item.id}>
       {item.image && (
-        <img className="article-image" src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
+        <PublicImage className="article-image" src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
       )}
       <div className="article-body">
         <p className="eyebrow green">BÀI VIẾT</p>
@@ -263,7 +268,7 @@ export function ArticleCard({ item }: { item: PublicItem }) {
 export function LotCard({ lot }: { lot: PublicLot }) {
   return (
     <a href={`/lo/${lot.id}`} className="lot-card">
-      {lot.image ? <img src={lot.image} alt={lot.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" /> : <div className="lot-image">✳</div>}
+      {lot.image ? <PublicImage src={lot.image} alt={lot.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" /> : <div className="lot-image">✳</div>}
       <div className="lot-card-body">
         <p className="eyebrow green">LÔ {lot.code} · CÒN HÀNG</p>
         <h3>{lot.title}</h3>
