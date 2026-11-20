@@ -135,6 +135,7 @@ export async function publicLotsPage(page: number, perPage: number, plantType?: 
 export async function publicLot(id: number) {
   return unstable_cache(async () => getDb().select({
     id: inventoryLots.id, code: inventoryLots.code, title: inventoryLots.title,
+    quantityRemaining: inventoryLots.quantityRemaining,
     plantType: inventoryLots.plantType, sizeOrAge: inventoryLots.sizeOrAge,
     location: inventoryLots.location, minimumOrderQuantity: inventoryLots.minimumOrderQuantity,
     unit: inventoryLots.unit, wholesalePrice: inventoryLots.wholesalePrice,
