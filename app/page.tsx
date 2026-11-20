@@ -26,7 +26,7 @@ export default async function Home() {
         areaServed: { "@type": "Country", name: "Việt Nam" }, sameAs: [config.zalo, config.facebook].filter(Boolean),
       }) }} />
       <SiteHeader />
-      <main>
+      <main className="home-page">
         <section className="hero">
           <div className="hero-inner">
             <p className="eyebrow">VĂN GIANG · HƯNG YÊN</p>
@@ -36,8 +36,9 @@ export default async function Home() {
               <em>về ngôi nhà bạn.</em>
             </h1>
             <p className="hero-copy">
-              Ghé Nhà vườn Nho Văn, chọn một cây quất cảnh thật ưng ý cho không
-              gian của bạn.
+              Với <strong>hơn 30 năm kinh nghiệm</strong> trồng và chăm sóc quất cảnh
+              tại Văn Giang, Nhà vườn Nho Văn giúp bạn chọn cây ưng ý, nhận bán lẻ
+              và bán sỉ theo lô.
             </p>
             <div className="actions">
               <a className="button light" href="/cay-quat">
@@ -49,37 +50,6 @@ export default async function Home() {
             </div>
           </div>
           <HeroSlideshow slides={slides} />
-          <div className="hero-bottom">
-            <span>NHÀ VƯỜN NHO VĂN</span>
-            <span>QUẤT CẢNH VĂN GIANG — VIỆT NAM</span>
-          </div>
-        </section>
-        <section className="intro wrap" id="cauchuyen">
-          <div>
-            <p className="eyebrow green">MỘT CHÚT VỀ NHÀ VƯỜN</p>
-            <h2>
-              Vẻ đẹp từ vườn,
-              <br />
-              <em>niềm vui đến nhà.</em>
-            </h2>
-          </div>
-          <div>
-            <p>
-              Với <strong>hơn 30 năm kinh nghiệm</strong> trồng và chăm sóc quất cảnh, Nhà vườn Nho Văn luôn chăm chút từng cây để mang đến vẻ đẹp và niềm vui cho mỗi gia đình.
-            </p>
-            <p>
-              Nhà vườn Nho Văn là nơi bạn có thể tìm hiểu và lựa chọn những cây
-              quất cảnh phù hợp cho gia đình, không gian làm việc hay dịp sum
-              họp.
-            </p>
-            <p>
-              Hãy ghé thăm vườn để tận mắt ngắm cây và trò chuyện cùng nhà vườn.
-            </p>
-            <p>Website chính thức: <a href={SITE_URL}>nhavuonnhovan.io.vn</a>.</p>
-            <a className="underline" href="#lienhe">
-              Tìm đường đến vườn ↗
-            </a>
-          </div>
         </section>
         <section className="catalog" id="cay">
           <div className="wrap">

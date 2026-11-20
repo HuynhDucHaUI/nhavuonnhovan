@@ -31,6 +31,12 @@ body:has(.site-header) .green { color: #46804d; }
 body:has(.site-header) .intro { padding-top: 100px; padding-bottom: 100px; }
 body:has(.site-header) .catalog { background: #f0f6ed; }
 body:has(.site-header) .wholesale-home { background: #fbfaf5; }
+body:has(.site-header) .home-page .catalog,
+body:has(.site-header) .home-page .journal { padding: 56px 0; }
+.home-page .section-head { margin-bottom: 28px; gap: 24px; }
+.home-page .section-head .eyebrow { margin: 0 0 10px; }
+.home-page .section-copy p { margin: 0; }
+body:has(.site-header) .home-page + .site-footer { padding-top: 56px; padding-bottom: 56px; }
 body:has(.site-header) .section-copy a, body:has(.site-header) .underline { color: #21633c; border-color: #a5c4a6; }
 body:has(.site-header) .card, body:has(.site-header) .article, body:has(.site-header) .lot-card { display: block; overflow: hidden; border: 1px solid #e4ede1; border-radius: 20px; background: #fff; box-shadow: 0 8px 28px #173d2b0a; transition: transform .2s, box-shadow .2s; }
 body:has(.site-header) .card:hover, body:has(.site-header) .article:hover, body:has(.site-header) .lot-card:hover { transform: translateY(-4px); box-shadow: 0 15px 35px #173d2b18; }
@@ -77,6 +83,11 @@ body:has(.site-header) :focus-visible { outline: 3px solid #d77b14; outline-offs
   body:has(.site-header) .wrap { width: 88%; }
   body:has(.site-header) .intro { padding-top: 70px; padding-bottom: 70px; }
   body:has(.site-header) .section-head { margin-bottom: 28px; }
+  body:has(.site-header) .home-page .catalog,
+  body:has(.site-header) .home-page .journal { padding: 40px 0; }
+  body:has(.site-header) .home-page .section-head { margin-bottom: 22px; gap: 16px; }
+  .home-page .section-copy { margin-top: 12px; }
+  body:has(.site-header) .home-page + .site-footer { padding-top: 48px; padding-bottom: 64px; }
   body:has(.site-header) .lot-filters { padding: 16px; }
   body:has(.site-header) .site-footer { padding: 56px 0 80px; }
   .site-footer .actions { align-items: flex-start; flex-direction: column; gap: 18px; padding-right: 44px; }
@@ -120,13 +131,13 @@ body:has(.site-header) :focus-visible { outline: 3px solid #d77b14; outline-offs
 @media (max-width: 360px) { .slideshow-caption strong { font-size: 20px; }.hero-slideshow .slideshow-caption { bottom: 80px; }.slide-controls { left: 18px; right: 62px; bottom: 12px; gap: 10px; }.slide-dots button { width: 16px; }.slide-dots span { width: 10px; }.hero-slideshow .slide-arrow { width: 34px; height: 34px; }.hero-slideshow .slide-play { width: 28px; }.slide-read { margin-top: 8px; } }
 @media (prefers-reduced-motion: reduce) { .slideshow-photo { animation: none; }.hero-slideshow button, .slide-dots span, .slide-read { transition: none; } }
 /* Keep the hero balanced instead of enlarging the photograph with the viewport. */
-body:has(.site-header) .hero { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); column-gap: clamp(32px, 5vw, 72px); row-gap: 20px; min-height: 0; padding: 44px max(7%, calc((100% - 1200px) / 2)) 0; }
+body:has(.site-header) .hero { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); column-gap: clamp(32px, 5vw, 72px); row-gap: 20px; min-height: 0; padding: 44px max(7%, calc((100% - 1200px) / 2)); }
 body:has(.site-header) .hero h1 { font-size: clamp(44px, 4.8vw, 68px); }
 body:has(.site-header) .hero-inner { padding: 24px 0; }
 .hero-slideshow { max-width: none; height: clamp(320px, 36.4vw, 440px); aspect-ratio: auto; justify-self: end; margin-bottom: 8px; }
 .slideshow-caption strong { font-size: clamp(23px, 2.1vw, 30px); }
 @media (min-width: 701px) and (max-width: 900px) {
-  body:has(.site-header) .hero { grid-template-columns: 1fr; gap: 24px; padding: 36px 8% 0; }
+  body:has(.site-header) .hero { grid-template-columns: 1fr; gap: 24px; padding: 36px 8%; }
   body:has(.site-header) .hero-inner { max-width: 620px; padding: 8px 0; justify-self: center; text-align: center; }
   body:has(.site-header) .hero-copy { margin-left: auto; margin-right: auto; }
   body:has(.site-header) .hero .actions { justify-content: center; }
@@ -145,7 +156,7 @@ body:has(.site-header) .hero-inner { padding: 24px 0; }
   .site-header .mobile-navigation-panel .nav-cta { text-align: center; margin-top: 7px; }
 }
 @media (max-width: 700px) {
-  body:has(.site-header) .hero { gap: 20px; padding: 28px 6% 0; }
+  body:has(.site-header) .hero { gap: 20px; padding: 28px 6%; }
   body:has(.site-header) .hero-inner { padding: 8px 0 4px; }
   body:has(.site-header) .hero h1 { font-size: clamp(36px, 9.5vw, 48px); }
   body:has(.site-header) .hero-copy { font-size: 15px; margin: 18px 0 22px; }
