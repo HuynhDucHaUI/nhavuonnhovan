@@ -185,8 +185,15 @@ body:has(.site-header) .product-card { display: flex; flex-direction: column; }
 .product-inquiry .inquiry-status { margin: 10px 0; font-size: 13px; line-height: 1.6; }
 .product-inquiry textarea { width: 100%; padding: 10px; margin-top: 8px; font: inherit; font-size: 13px; border: 1px solid #b5c2b0; border-radius: 6px; }
 .product-status { font-size: 12px; font-weight: 700; color: #905620; }
-.item-contact { margin: 22px 0; max-width: 520px; }
-.item-contact .actions { margin-top: 12px; flex-wrap: wrap; gap: 10px; }
+.item-contact { margin: 22px 0; }
+.item-contact .inquiry-actions { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px; overflow-x: auto; padding: 4px 3px; }
+.item-contact .inquiry-actions .button { flex: 0 0 auto; min-height: 46px; padding: 14px 18px; white-space: nowrap; }
+.item-contact .inquiry-hint { text-align: left; }
+@media (max-width: 600px) {
+  .item-contact .inquiry-actions { gap: 6px; }
+  .item-contact .inquiry-actions .button { padding: 13px 8px; font-size: 12px; }
+  .item-contact .phone-prefix { display: none; }
+}
 .product-card a:focus-visible { outline: 3px solid #b88728; outline-offset: 3px; }
 .hero-slideshow .slide-controls { justify-content: flex-end; border-top: 0; }
 .hero-slideshow .slide-arrow { width: 46px; height: 46px; }

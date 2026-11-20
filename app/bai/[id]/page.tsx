@@ -40,7 +40,7 @@ export default async function Detail({ params }: { params: Promise<{ id: string 
     <h1>{item.title}</h1>
     {item.kind === "plant" ? gallery.length > 0 && <PlantImageGallery images={gallery} title={item.title} /> : item.image && <img className="detail-img" src={item.image} alt={item.title} decoding="async" />}
     {item.kind === "plant" && <p><b>{item.price || (item.priceVnd != null ? `Giá tham khảo: ${item.priceVnd.toLocaleString("vi-VN")} ₫` : "Liên hệ để biết giá")}</b> · {item.status === "sold" ? "Đã bán" : item.status === "available" ? "Còn tại vườn" : "Vui lòng liên hệ"}</p>}
-    {item.kind === "plant" ? item.status !== "sold" && <ContactItem title={item.title} code={item.code} path={`/bai/${item.id}`} kind="cây" phone={config.phone} zalo={config.zalo} /> : <div className="actions">{config.phone && <a className="button dark" href={`tel:${config.phone}`}>Gọi nhà vườn</a>}{config.zalo && <a className="button dark" href={config.zalo} target="_blank" rel="noreferrer">Nhắn Zalo</a>}</div>}
+    {(item.kind !== "plant" || item.status !== "sold") && <ContactItem title={item.title} code={item.code} path={`/bai/${item.id}`} kind={item.kind === "plant" ? "cây" : "bài viết"} phone={config.phone} phone2={config.phone2} zalo={config.zalo} />}
     <p className="description">{item.description}</p>
   </article></main><SiteFooter /></>;
 }
