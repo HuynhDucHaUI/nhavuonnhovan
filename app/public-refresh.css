@@ -51,6 +51,8 @@ body:has(.site-header) .listing-page.collection-page { padding-top: 30px; paddin
 .collection-breadcrumb a:hover { color: #215e3c; text-decoration: underline; }
 body:has(.site-header) .collection-page h1 { margin: 16px 0 10px; font-size: clamp(36px, 3vw, 44px); line-height: 1.2; font-weight: 700; letter-spacing: -.025em; }
 .collection-page .listing-intro { margin: 0 0 26px; max-width: 680px; font-size: 15px; line-height: 1.65; }
+.detail-page > .detail { padding: 0; }
+body:has(.site-header) .detail-page h1 { margin-bottom: 20px; overflow-wrap: anywhere; }
 body:has(.site-header) .listing-page { padding-top: 65px; }
 body:has(.site-header) .lot-filters { padding: 22px; background: #f0f6ed; border-radius: 18px; }
 body:has(.site-header) .lot-filters input, body:has(.site-header) .lot-filters select { border: 1px solid #ccddca; border-radius: 9px; min-height: 44px; }
