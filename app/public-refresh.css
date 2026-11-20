@@ -155,3 +155,23 @@ body:has(.site-header) .hero-inner { padding: 24px 0; }
   .slide-controls { right: 48px; }
   .slideshow-caption strong { font-size: 20px; }
 }
+
+/* Product summaries and direct inquiries shared by home and catalog pages. */
+body:has(.site-header) .product-card { display: flex; flex-direction: column; }
+.product-image-link { display: block; }
+.product-image-link > img { display: block; width: 100%; }
+.product-card .card-body, .product-card .lot-card-body { display: flex; flex-direction: column; flex: 1; gap: 12px; padding: 22px; }
+.product-card h3, .product-card p { margin: 0; }
+.product-card .product-summary { color: #627166; font-size: 14px; line-height: 1.65; white-space: normal; }
+.product-card .product-inquiry { margin-top: auto; padding-top: 8px; }
+.product-inquiry .inquiry-button { display: flex; justify-content: center; align-items: center; min-height: 46px; border-radius: 9px; text-align: center; }
+.inquiry-hint { display: block; margin-top: 8px; font-size: 11px; color: #627166; line-height: 1.5; text-align: center; }
+.product-inquiry .inquiry-status { margin: 10px 0; font-size: 13px; line-height: 1.6; }
+.product-inquiry textarea { width: 100%; padding: 10px; margin-top: 8px; font: inherit; font-size: 13px; border: 1px solid #b5c2b0; border-radius: 6px; }
+.product-status { font-size: 12px; font-weight: 700; color: #905620; }
+.item-contact { margin: 22px 0; max-width: 520px; }
+.item-contact .actions { margin-top: 12px; flex-wrap: wrap; gap: 10px; }
+.product-card a:focus-visible { outline: 3px solid #b88728; outline-offset: 3px; }
+.hero-slideshow .slide-controls { justify-content: flex-end; border-top: 0; }
+.hero-slideshow .slide-arrow { width: 46px; height: 46px; }
+@media (max-width: 700px) { .product-card .card-body, .product-card .lot-card-body { padding: 18px; } }

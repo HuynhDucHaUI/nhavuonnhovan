@@ -1,5 +1,5 @@
 import { SiteFooter, SiteHeader } from "../components/site-chrome";
-import { publicLotsPage } from "../data";
+import { publicLotsPage, publicContact } from "../data";
 import { LotCard } from "../page";
 import Link from "next/link";
 
@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 const perPage = 9;
 
 export default async function WholesaleLotsPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
+  const config = await publicContact();
   const { page: rawPage } = await searchParams;
   const parsedPage = Number(rawPage);
   const requestedPage = Number.isSafeInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
@@ -19,7 +20,7 @@ export default async function WholesaleLotsPage({ searchParams }: { searchParams
     <nav className="collection-breadcrumb" aria-label="Đường dẫn"><Link href="/">Trang chủ</Link><span aria-hidden="true">›</span><span aria-current="page">Bán sỉ theo lô</span></nav>
     <h1>Bán sỉ quất theo lô</h1>
     <p className="listing-intro">Các lô đang còn hàng. Liên hệ nhà vườn để được tư vấn số lượng.</p>
-    {shown.length ? <div className="lot-grid">{shown.map((lot) => <LotCard lot={lot} key={lot.id} />)}</div> : <p className="muted">Nhà vườn đang cập nhật danh sách lô cây. Vui lòng liên hệ để được tư vấn.</p>}
+    {shown.length ? <div className="lot-grid">{shown.map((lot) => <LotCard zalo={config.zalo} lot={lot} key={lot.id} />)}</div> : <p className="muted">Nhà vườn đang cập nhật danh sách lô cây. Vui lòng liên hệ để được tư vấn.</p>}
     <Pagination page={page} pageCount={pageCount} path="/lo-si" />
   </div></main><SiteFooter /></>;
 }

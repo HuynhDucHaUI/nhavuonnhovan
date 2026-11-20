@@ -1,3 +1,4 @@
+import { ContactInquiry } from "./components/contact-item";
 import { HeroSlideshow } from "./components/hero-slideshow";
 import { SiteFooter, SiteHeader } from "./components/site-chrome";
 import { PublicImage } from "./components/public-image";
@@ -101,7 +102,7 @@ export default async function Home() {
             {plants.length ? (
               <div className="grid">
                 {plants.map((item) => (
-                  <PlantCard item={item} key={item.id} />
+                  <PlantCard item={item} zalo={config.zalo} key={item.id} />
                 ))}
               </div>
             ) : (
@@ -127,7 +128,7 @@ export default async function Home() {
             </div>
             {lots.length ? (
               <div className="grid">
-                {lots.slice(0, homeLimit).map((lot) => <LotCard lot={lot} key={lot.id} />)}
+                {lots.slice(0, homeLimit).map((lot) => <LotCard lot={lot} zalo={config.zalo} key={lot.id} />)}
               </div>
             ) : (
               <Empty text="Nhà vườn đang cập nhật các lô cây bán sỉ." />
@@ -170,9 +171,10 @@ export default async function Home() {
 
 type PublicItem = Awaited<ReturnType<typeof latestPublicEntries>>[number];
 export type PublicLot = Awaited<ReturnType<typeof latestPublicLots>>[number];
-export function PlantCard({ item }: { item: PublicItem }) {
+export function PlantCard({ item, zalo }: { item: PublicItem; zalo: string }) {
   return (
-    <a href={"/bai/" + item.id} className="card">
+    <article className="card product-card">
+      <a href={"/bai/" + item.id} className="product-image-link">
       <div className="card-image">
         {item.image ? (
           <PublicImage src={item.image} alt={item.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" />
@@ -180,19 +182,15 @@ export function PlantCard({ item }: { item: PublicItem }) {
           <span>✳</span>
         )}
       </div>
+      </a>
       <div className="card-body">
-        <p className="eyebrow green">
-          {item.code || "QUẤT CẢNH"} ·{" "}
-          {item.status === "sold"
-            ? "ĐÃ BÁN"
-            : item.status === "available"
-              ? "CÒN TẠI VƯỜN"
-              : "LIÊN HỆ"}
-        </p>
-        <h3>{item.title}</h3>
+        {item.status === "sold" && <p className="product-status">Đã bán</p>}
+        <h3><a href={`/bai/${item.id}`}>{item.title}</a></h3>
+        <p className="product-summary">{catalogSummary(item.description, [item.plantShape, item.heightCm != null ? `Cao ${item.heightCm} cm` : ""])}</p>
         <p>{item.price || (item.priceVnd != null ? `Giá tham khảo: ${item.priceVnd.toLocaleString("vi-VN")} ₫` : "Liên hệ để biết giá")}</p>
+        {item.status !== "sold" && <ContactInquiry title={item.title} path={`/bai/${item.id}`} kind="cây" zalo={zalo} label={item.price || item.priceVnd != null ? "Hỏi mua qua Zalo" : "Hỏi giá qua Zalo"} />}
       </div>
-    </a>
+    </article>
   );
 }
 export function ArticleCard({ item }: { item: PublicItem }) {
@@ -210,19 +208,20 @@ export function ArticleCard({ item }: { item: PublicItem }) {
     </a>
   );
 }
-export function LotCard({ lot }: { lot: PublicLot }) {
+export function LotCard({ lot, zalo }: { lot: PublicLot; zalo: string }) {
   return (
-    <a href={`/lo/${lot.id}`} className="lot-card">
+    <article className="lot-card product-card">
+      <a href={`/lo/${lot.id}`} className="product-image-link">
       {lot.image ? <PublicImage src={lot.image} alt={lot.title} loading="lazy" decoding="async" sizes="(max-width: 700px) 100vw, 33vw" /> : <div className="lot-image">✳</div>}
+      </a>
       <div className="lot-card-body">
-        <p className="eyebrow green">LÔ {lot.code} · CÒN HÀNG</p>
-        <h3>{lot.title}</h3>
-        <div className="lot-meta"><span>{lot.plantType}</span>{lot.sizeOrAge && <span>· {lot.sizeOrAge}</span>}</div>
+        <h3><a href={`/lo/${lot.id}`}>{lot.title}</a></h3>
+        <p className="product-summary">{catalogSummary(lot.description, [lot.plantType, lot.sizeOrAge])}</p>
         <p>{lot.wholesalePrice || "Liên hệ báo giá"}</p>
         <p className="lot-order">Mua tối thiểu: {lot.minimumOrderQuantity} {lot.unit}</p>
-        <span className="lot-cta">Xem lô & liên hệ →</span>
+        <ContactInquiry title={lot.title} path={`/lo/${lot.id}`} kind="lô" zalo={zalo} label="Hỏi giá sỉ qua Zalo" />
       </div>
-    </a>
+    </article>
   );
 }
 function Empty({ text }: { text: string }) {
@@ -233,4 +232,12 @@ function Empty({ text }: { text: string }) {
       <a href="#lienhe">Xem thông tin liên hệ ↗</a>
     </div>
   );
+}
+
+function catalogSummary(description: string, features: string[]) {
+  const text = description.replace(/\s+/g, " ").trim() || features.filter(Boolean).join(" · ");
+  if (text.length <= 170) return text;
+  const excerpt = text.slice(0, 171);
+  const boundary = excerpt.lastIndexOf(" ");
+  return `${excerpt.slice(0, boundary > 120 ? boundary : 170).trimEnd()}…`;
 }
