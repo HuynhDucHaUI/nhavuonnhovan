@@ -13,7 +13,12 @@ export default async function ArticlesPage({ searchParams }: { searchParams: Pro
   const pageCount = Math.max(1, Math.ceil(total / perPage));
   const page = Math.max(1, Math.min(pageCount, Number(rawPage) || 1));
   const shown = page === requestedPage ? articles : (await publicEntriesPage("article", page, perPage)).items;
-  return <><SiteHeader/><main className="listing-page article-listing"><div className="wrap"><Link className="back-link" href="/">← Về trang chủ</Link><p className="eyebrow green">CHUYỆN TỪ NHÀ VƯỜN</p><h1>Góc nhỏ <em>chia sẻ.</em></h1><p className="listing-intro">Thông tin, kinh nghiệm và những câu chuyện về quất cảnh từ Nhà vườn Nho Văn.</p>{shown.length ? <div className="article-list">{shown.map((item) => <ArticleCard item={item} key={item.id}/>)}</div> : <p className="muted">Chưa có bài viết được xuất bản.</p>}<Pagination page={page} pageCount={pageCount} path="/bai-viet"/></div></main><SiteFooter/></>;
+  return <><SiteHeader/><main className="listing-page collection-page"><div className="wrap">
+    <nav className="collection-breadcrumb" aria-label="Đường dẫn"><Link href="/">Trang chủ</Link><span aria-hidden="true">›</span><span aria-current="page">Bài viết</span></nav>
+    <h1>Bài viết từ nhà vườn</h1>
+    {shown.length ? <><p className="listing-intro">{total} bài viết.</p><div className="article-list">{shown.map((item) => <ArticleCard item={item} key={item.id}/>)}</div></> : <p className="listing-intro">Chưa có bài viết được xuất bản.</p>}
+    <Pagination page={page} pageCount={pageCount} path="/bai-viet"/>
+  </div></main><SiteFooter/></>;
 }
 
 function Pagination({ page, pageCount, path }: { page: number; pageCount: number; path: string }) {
