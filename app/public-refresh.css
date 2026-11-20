@@ -33,9 +33,11 @@ body:has(.site-header) .catalog { background: #f0f6ed; }
 body:has(.site-header) .wholesale-home { background: #fbfaf5; }
 body:has(.site-header) .home-page .catalog,
 body:has(.site-header) .home-page .journal { padding: 56px 0; }
-.home-page .section-head { margin-bottom: 28px; gap: 24px; }
+.home-page .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 28px; gap: 24px; }
 .home-page .section-head .eyebrow { margin: 0 0 10px; }
-.home-page .section-copy p { margin: 0; }
+.home-page .section-description { max-width: 680px; margin: 12px 0 0; color: #516d59; font-size: 15px; line-height: 1.65; }
+.home-page .section-view-all { flex-shrink: 0; padding: 10px 0; border-bottom: 1px solid #a5c4a6; color: #21633c; font-size: 14px; font-weight: 700; white-space: nowrap; }
+.home-page .section-view-all:hover { color: #a24b00; border-color: currentColor; }
 body:has(.site-header) .home-page + .site-footer { padding-top: 56px; padding-bottom: 56px; }
 body:has(.site-header) .section-copy a, body:has(.site-header) .underline { color: #21633c; border-color: #a5c4a6; }
 body:has(.site-header) .card, body:has(.site-header) .article, body:has(.site-header) .lot-card { display: block; overflow: hidden; border: 1px solid #e4ede1; border-radius: 20px; background: #fff; box-shadow: 0 8px 28px #173d2b0a; transition: transform .2s, box-shadow .2s; }
@@ -86,7 +88,8 @@ body:has(.site-header) :focus-visible { outline: 3px solid #d77b14; outline-offs
   body:has(.site-header) .home-page .catalog,
   body:has(.site-header) .home-page .journal { padding: 40px 0; }
   body:has(.site-header) .home-page .section-head { margin-bottom: 22px; gap: 16px; }
-  .home-page .section-copy { margin-top: 12px; }
+  .home-page .section-head { flex-direction: column; align-items: stretch; }
+  .home-page .section-view-all { align-self: flex-end; }
   body:has(.site-header) .home-page + .site-footer { padding-top: 48px; padding-bottom: 64px; }
   body:has(.site-header) .lot-filters { padding: 16px; }
   body:has(.site-header) .site-footer { padding: 56px 0 80px; }
@@ -96,8 +99,8 @@ body:has(.site-header) :focus-visible { outline: 3px solid #d77b14; outline-offs
   .collection-page .listing-intro { font-size: 14px; margin-bottom: 22px; }
 }
 @media (prefers-reduced-motion: reduce) { body:has(.site-header) .button, body:has(.site-header) .card, body:has(.site-header) .article, body:has(.site-header) .lot-card { transition: none; } }
-/* Square story carousel: photograph, editorial caption, and a separate control row. */
-.hero-slideshow { touch-action: pan-y; width: 100%; aspect-ratio: 1; min-height: 0; align-self: center; border-radius: 0; background: #c9d9b8; box-shadow: 0 20px 48px -24px #123e3555; isolation: isolate; }
+/* Story carousel with clipped, rounded photograph corners. */
+.hero-slideshow { touch-action: pan-y; width: 100%; aspect-ratio: 1; min-height: 0; align-self: center; border-radius: 24px; background: #c9d9b8; box-shadow: 0 20px 48px -24px #123e3555; isolation: isolate; }
 .slideshow-photo { animation: slide-fade .55s ease; }
 @keyframes slide-fade { from { opacity: .45; } to { opacity: 1; } }
 .slide-shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, #0c261d45 0%, transparent 28%, #0c261d08 38%, #0c261d99 68%, #0c261df5 100%); }

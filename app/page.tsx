@@ -59,15 +59,9 @@ export default async function Home() {
                 <h2>
                   Tìm cây <em>ưng ý.</em>
                 </h2>
+                <p className="section-description">Mỗi cây một dáng vẻ riêng. Mời bạn khám phá và liên hệ nhà vườn.</p>
               </div>
-              <div className="section-copy">
-                <p>
-                  Mỗi cây một dáng vẻ riêng.
-                  <br />
-                  Mời bạn khám phá và liên hệ nhà vườn.
-                </p>
-                <a href="/cay-quat">Xem tất cả cây quất ↗</a>
-              </div>
+              <a className="section-view-all" href="/cay-quat" aria-label="Xem tất cả cây quất">Xem tất cả</a>
             </div>
             {plants.length ? (
               <div className="grid">
@@ -88,13 +82,11 @@ export default async function Home() {
                 <h2>
                   Chọn lô <em>phù hợp.</em>
                 </h2>
-              </div>
-              <div className="section-copy">
-                <p>
+                <p className="section-description">
                   Nhà vườn bán sỉ theo lô để khách dễ chọn số lượng và dáng cây phù hợp.
                 </p>
-                <a href="/lo-si">Xem tất cả lô đang chào bán →</a>
               </div>
+              <a className="section-view-all" href="/lo-si" aria-label="Xem tất cả lô bán sỉ">Xem tất cả</a>
             </div>
             {lots.length ? (
               <div className="grid">
@@ -112,15 +104,9 @@ export default async function Home() {
               <h2>
                 Góc nhỏ <em>chia sẻ.</em>
               </h2>
+              <p className="section-description">Thông tin và những câu chuyện về quất cảnh từ nhà vườn.</p>
             </div>
-            <div className="section-copy">
-              <p>
-                Thông tin và những câu chuyện
-                <br />
-                về quất cảnh từ nhà vườn.
-              </p>
-              <a href="/bai-viet">Xem tất cả bài viết ↗</a>
-            </div>
+            <a className="section-view-all" href="/bai-viet" aria-label="Xem tất cả bài viết">Xem tất cả</a>
           </div>
           {articles.length ? (
             <div className="grid">
