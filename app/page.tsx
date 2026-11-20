@@ -64,6 +64,9 @@ export default async function Home() {
           </div>
           <div>
             <p>
+              Với <strong>hơn 30 năm kinh nghiệm</strong> trồng và chăm sóc quất cảnh, Nhà vườn Nho Văn luôn chăm chút từng cây để mang đến vẻ đẹp và niềm vui cho mỗi gia đình.
+            </p>
+            <p>
               Nhà vườn Nho Văn là nơi bạn có thể tìm hiểu và lựa chọn những cây
               quất cảnh phù hợp cho gia đình, không gian làm việc hay dịp sum
               họp.
@@ -158,62 +161,7 @@ export default async function Home() {
             <p className="muted">Bài viết mới sẽ sớm được cập nhật tại đây.</p>
           )}
         </section>
-        <section className="visit" id="lienhe">
-          <div className="wrap visit-inner">
-            <div>
-              <p className="eyebrow">HẸN GẶP BẠN TẠI VƯỜN</p>
-              <h2>
-                Đến chơi vườn,
-                <br />
-                <em>chọn cây mang về.</em>
-              </h2>
-              <p>
-                Thôn CD Quán Trạch, Xã Văn Giang,
-                <br />
-                Tỉnh Hưng Yên
-              </p>
-              <div className="actions">
-                {config.map && (
-                  <a
-                    className="button light"
-                    href={config.map}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Chỉ đường đến vườn ↗
-                  </a>
-                )}
-                {config.phone && (
-                  <a className="text-link" href={"tel:" + config.phone}>
-                    Gọi {config.phone}
-                  </a>
-                )}
-                {config.phone2 && (
-                  <a className="text-link" href={"tel:" + config.phone2}>
-                    Gọi {config.phone2}
-                  </a>
-                )}
-                {config.zalo && (
-                  <a
-                    className="text-link"
-                    href={config.zalo}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Nhắn Zalo ↗
-                  </a>
-                )}
-              </div>
-            </div>
-            <div className="visit-mark">
-              <img src="/icon.png" alt="" width="142" height="142" /><small>
-                NHO VĂN
-                <br />
-                VĂN GIANG
-              </small>
-            </div>
-          </div>
-        </section>
+
       </main>
       <SiteFooter />
     </>

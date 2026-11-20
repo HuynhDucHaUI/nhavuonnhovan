@@ -42,10 +42,15 @@ body:has(.site-header) .visit { background: #1c5235; }
 body:has(.site-header) .visit h2 em { color: #ffd094; }
 body:has(.site-header) .visit-mark { background: #f9fcf2; border: 0; color: #27603b; }
 body:has(.site-header) .visit-mark img { object-fit: contain; }
-body:has(.site-header) .site-footer { background: #fffef9; color: #486451; padding-top: 24px; padding-bottom: 24px; }
-.footer-brand { display: flex; align-items: center; gap: 10px; line-height: 1.45; }
-.footer-brand img { object-fit: contain; }
-.footer-brand b { display: block; color: #173d27; font-size: 13px; }
+body:has(.site-header) .site-footer { display: block; background: #1c5235; color: #fff; padding: 80px 0; font-size: 16px; letter-spacing: normal; }
+.site-footer .visit-inner { gap: 48px; }
+.site-footer .actions { flex-wrap: wrap; gap: 20px 28px; }
+.site-footer .visit-mark { flex-shrink: 0; }
+body:has(.site-header) .listing-page.collection-page { padding-top: 30px; padding-bottom: 64px; }
+.collection-breadcrumb { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; font-size: 13px; line-height: 1.5; color: #627367; }
+.collection-breadcrumb a:hover { color: #215e3c; text-decoration: underline; }
+body:has(.site-header) .collection-page h1 { margin: 16px 0 10px; font-size: clamp(36px, 3vw, 44px); line-height: 1.2; font-weight: 700; letter-spacing: -.025em; }
+.collection-page .listing-intro { margin: 0 0 26px; max-width: 680px; font-size: 15px; line-height: 1.65; }
 body:has(.site-header) .listing-page { padding-top: 65px; }
 body:has(.site-header) .lot-filters { padding: 22px; background: #f0f6ed; border-radius: 18px; }
 body:has(.site-header) .lot-filters input, body:has(.site-header) .lot-filters select { border: 1px solid #ccddca; border-radius: 9px; min-height: 44px; }
@@ -71,7 +76,11 @@ body:has(.site-header) :focus-visible { outline: 3px solid #d77b14; outline-offs
   body:has(.site-header) .intro { padding-top: 70px; padding-bottom: 70px; }
   body:has(.site-header) .section-head { margin-bottom: 28px; }
   body:has(.site-header) .lot-filters { padding: 16px; }
-  body:has(.site-header) .site-footer { padding-right: 72px; }
+  body:has(.site-header) .site-footer { padding: 56px 0 80px; }
+  .site-footer .actions { align-items: flex-start; flex-direction: column; gap: 18px; padding-right: 44px; }
+  body:has(.site-header) .listing-page.collection-page { padding-top: 22px; padding-bottom: 44px; }
+  body:has(.site-header) .collection-page h1 { font-size: clamp(28px, 7.5vw, 32px); margin-top: 14px; }
+  .collection-page .listing-intro { font-size: 14px; margin-bottom: 22px; }
 }
 @media (prefers-reduced-motion: reduce) { body:has(.site-header) .button, body:has(.site-header) .card, body:has(.site-header) .article, body:has(.site-header) .lot-card { transition: none; } }
 /* Square story carousel: photograph, editorial caption, and a separate control row. */
